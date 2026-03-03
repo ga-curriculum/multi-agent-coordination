@@ -21,7 +21,7 @@ By the end of this session, students will be able to:
 2. **Simulate** a scenario where multiple agents work together on a shared task, highlighting the interaction flow between agents.
 3. **Analyze** the risks of miscommunication and conflict between agents and **propose** coordination or conflict-resolution mechanisms to reduce failures.
 
-> A single agent can do a great deal. But many of the most valuable workflows — research, analysis, content production, software development — are too complex, too long, or too multi-disciplinary for a single agent to handle reliably. Multi-agent systems are the architectural response to that limitation.
+> A single agent can do a great deal. But many of the most valuable workflows — research, analysis, content production — are too complex or too multi-disciplinary for a single agent to handle reliably. Multi-agent systems are the architectural response to that limitation.
 
 ---
 
@@ -29,9 +29,9 @@ By the end of this session, students will be able to:
 
 | # | Segment | Duration |
 |---|---------|----------|
-| 1 | Models of Multi-Agent Coordination | 15 min |
-| 2 | Simulating a Multi-Agent Workflow | 20 min |
-| 3 | Risks, Failures, and Coordination Mechanisms | 10 min |
+| 1 | Why Multiple Agents? Coordination Models | 20 min |
+| 2 | Simulating a Multi-Agent Workflow | 25 min |
+| 3 | Risks, Failures, and How to Handle Them | 20 min |
 | 4 | Break | 10 min |
 | 5 | Lab | 60 min |
 | 6 | Wrap-Up & Reflection | 5 min |
@@ -39,290 +39,350 @@ By the end of this session, students will be able to:
 
 ---
 
-## 1. Models of Multi-Agent Coordination (15 min)
+## 1. Why Multiple Agents? Coordination Models (20 min)
 
-### Why Multiple Agents?
+### Why Not Just One Agent?
 
-Before introducing coordination models, it is worth establishing why multi-agent systems exist at all — because the answer shapes every architectural decision that follows.
+Before diving into how multi-agent systems work, it's worth asking: why would you ever need more than one agent?
 
-Three limitations of single-agent systems motivate multi-agent design:
+Think of it like a team at work. A single person can handle a simple task alone. But a complex project — say, launching a product — requires a researcher, a designer, a writer, and a project manager. Assigning all of that to one person produces mediocre results across the board. Specialization works.
 
-<img width="917" height="293" alt="image" src="https://git.generalassemb.ly/user-attachments/assets/46413759-9ae8-46dd-9777-995db63cfcaf" />
+The same logic applies to agents. Three limitations of single-agent systems motivate multi-agent design:
 
-
-Multi-agent architecture is not always the right answer. It introduces coordination overhead, failure surfaces, and debugging complexity that a single well-designed agent avoids. The decision to use multiple agents should be justified by one or more of the three motivations above.
-
-### Coordination Model 1: Sequential
-
-In sequential coordination, agents form a pipeline. Each agent completes its task and passes its output to the next agent as input. No agent begins until the previous one has finished.
-
-<img width="934" height="121" alt="image" src="https://git.generalassemb.ly/user-attachments/assets/12366b5b-61b5-40bf-b75e-5a897ecd87e5" />
+<img width="924" height="275" alt="image" src="https://git.generalassemb.ly/user-attachments/assets/a4f5baab-ed68-4c2d-ad5e-78ad7cef5e02" />
 
 
-**Characteristics:**
-- Simple to implement and debug — execution order is deterministic
-- Each agent's input is well-defined (the output of the previous agent)
-- Total execution time is the sum of all agents' execution times — no parallelism
-- A failure at any stage blocks all downstream agents
-
-**Best suited for:** Workflows where each step depends on the full output of the previous step — content pipelines, document processing, staged analysis.
+> **Important:** Multi-agent is not always the right answer. It adds coordination complexity and more ways things can go wrong. The decision to use multiple agents should be justified by one of the three reasons above — not just because it sounds more powerful.
 
 ---
 
-### Coordination Model 2: Hierarchical
+### Coordination Model 1: Sequential (The Pipeline)
 
-In hierarchical coordination, an orchestrator agent directs one or more worker agents. The orchestrator receives the top-level goal, decomposes it into subtasks, delegates each subtask to the appropriate worker, collects results, and synthesizes the final output.
+Agents form a chain. Each agent completes its task and passes the result to the next. No agent starts until the previous one has finished.
 
-<img width="935" height="331" alt="image" src="https://git.generalassemb.ly/user-attachments/assets/f00ed5a6-936f-43cf-9a15-f735d45a1985" />
+```
+[Agent A: Research]
+       ↓ output
+[Agent B: Analysis]
+       ↓ output
+[Agent C: Report Writing]
+       ↓
+[Final Deliverable]
+```
 
+**Think of it like:** a relay race. Each runner waits for the baton before starting. Clear, predictable, easy to follow.
 
-**Characteristics:**
-- The orchestrator maintains the full task context; workers maintain only their subtask context
-- Workers can run in parallel if their subtasks are independent
-- The orchestrator is a single point of failure — if it reasons incorrectly about task decomposition, all downstream work is misdirected
-- Debugging requires understanding both the orchestrator's decomposition logic and each worker's execution
+**When it works well:** When each step truly depends on the full output of the step before it — content pipelines, document drafting, staged analysis.
 
-**Best suited for:** Complex tasks with multiple independent subtasks, workflows requiring coordination across specialized domains, tasks where the decomposition logic needs to adapt based on intermediate results.
-
----
-
-### Coordination Model 3: Cooperative (Peer-to-Peer)
-
-In cooperative coordination, agents work as peers without a central orchestrator. They communicate directly with each other, sharing information and results as the workflow progresses. Coordination emerges from defined communication protocols rather than a hierarchy.
-
-<img width="412" height="191" alt="image" src="https://git.generalassemb.ly/user-attachments/assets/9d606f8d-5a4e-4886-bad7-8cec20b9b3d9" />
-
-
-**Characteristics:**
-- No single point of failure in the coordination layer — the failure of one agent does not block all others
-- More resilient to individual agent failures than hierarchical coordination
-- Significantly more complex to design and debug — emergent communication patterns are harder to trace
-- Risk of conflicting outputs if agents make inconsistent assumptions about shared state
-
-**Best suited for:** Systems that require high resilience, workflows where tasks are genuinely interdependent and benefit from peer feedback, simulations and research environments.
+**The main risk:** If Agent A makes a mistake, Agents B and C build on top of that mistake. The error travels through the whole chain.
 
 ---
 
-### Coordination Model 4: Consensus-Based
+### Coordination Model 2: Hierarchical (The Manager + Team)
 
-A specialized form of cooperative coordination where multiple agents independently evaluate the same problem and a consensus mechanism determines the final output. Used when reliability and accuracy are more important than speed.
+An orchestrator agent receives the top-level goal, breaks it into subtasks, delegates to worker agents, collects their results, and combines them into a final output.
 
-<img width="401" height="212" alt="image" src="https://git.generalassemb.ly/user-attachments/assets/2a5f104d-0ac7-4318-9083-90089a80d42b" />
+```
+         [Orchestrator Agent]
+        /         |          \
+[Worker A]  [Worker B]  [Worker C]
+ Research    Analysis    Writing
+     ↓            ↓           ↓
+         [Orchestrator]
+         Combines results
+               ↓
+       [Final Deliverable]
+```
 
+**Think of it like:** a project manager directing a team. The manager doesn't do the research or write the report — they coordinate, check in, and pull everything together.
 
-**Characteristics:**
-- High reliability — errors by any single agent are less likely to propagate
-- Computationally expensive — multiple agents process the same input
-- Adds latency — consensus takes time
-- Appropriate for high-stakes decisions where the cost of a wrong answer exceeds the cost of extra computation
+**When it works well:** Complex tasks that can be broken into parallel workstreams handled by different specialists.
 
-**Best suited for:** Fact-checking, safety-critical decision support, outputs that will be presented to external stakeholders without human review.
+**The main risk:** If the orchestrator reasons incorrectly about how to split the task, all the downstream work goes in the wrong direction.
+
+---
+
+### Coordination Model 3: Cooperative (The Peer Team)
+
+Agents work as equals — no central orchestrator. They communicate with each other directly, sharing information and results as the workflow evolves.
+
+```
+[Agent A: Data Collection] ←→ [Agent B: Validation]
+          ↕                              ↕
+[Agent C: Analysis]        ←→ [Agent D: Reporting]
+```
+
+**Think of it like:** a cross-functional team without a designated project manager, where everyone coordinates directly with whoever they need.
+
+**When it works well:** Tasks where agents are genuinely interdependent and need to check each other's work in real time. More resilient — one agent failing doesn't necessarily stop all the others.
+
+**The main risk:** Much harder to design, trace, and debug. When agents communicate freely, it's difficult to understand what went wrong and why.
+
+---
 
 ### Coordination Model Summary
 
-<img width="932" height="284" alt="image" src="https://git.generalassemb.ly/user-attachments/assets/e68a9f1a-839a-4b3f-a24f-c983e1fb086c" />
+<img width="916" height="208" alt="image" src="https://git.generalassemb.ly/user-attachments/assets/e2307738-25ae-4a7d-9f31-6797e044fb80" />
 
+
+### Discussion Prompt (2 min)
+
+> Think about a real workflow at your job — something that involves multiple people or steps. Which coordination model does it most resemble? Sequential? Hierarchical? Cooperative?
 
 ---
 
-## 2. Simulating a Multi-Agent Workflow (20 min)
+## 2. Simulating a Multi-Agent Workflow (25 min)
 
-### The Scenario: Competitive Intelligence Report
+### The Scenario: Weekly Competitive Intelligence Report
 
-A business development team needs a weekly competitive intelligence report on three key competitors. The report must include: recent news and announcements, product and pricing changes, analysis of strategic implications, and an executive summary with recommended actions.
+A business development team needs a weekly summary of what their three main competitors have been doing — recent news, product changes, and what it all means strategically.
 
-This task is too long and multi-disciplinary for a single agent to handle reliably. It is an ideal candidate for a hierarchical multi-agent system.
+This task involves three very different types of work: **research**, **analysis**, and **writing**. That's a natural fit for a hierarchical multi-agent system.
 
 **The agent team:**
 
-<img width="925" height="374" alt="image" src="https://git.generalassemb.ly/user-attachments/assets/353fce07-5382-4943-92ed-50d6739d894e" />
+<img width="920" height="293" alt="image" src="https://git.generalassemb.ly/user-attachments/assets/4d4e942e-3014-4ad9-9dbc-c98c0ca54405" />
 
-
-### Step-by-Step Interaction Flow
-
-#### Step 1: Orchestrator Receives Goal and Decomposes Task
-
-```
-[Input to Orchestrator]
-Goal: "Generate this week's competitive intelligence report for Competitors X, Y, Z."
-Deadline: End of business today.
-Format: Standard CI report template.
-
-[Orchestrator Reasoning]
-THINK: "This requires three types of work: research, analysis, and writing.
-        Research must complete before analysis can begin.
-        Writing can begin once analysis is complete.
-        I will run research for all three competitors in parallel,
-        then pass all results to the Analysis Agent,
-        then pass analysis to the Writing Agent."
-
-[Orchestrator Output — Delegations]
-→ Research Agent: "Find all news, announcements, and product changes for 
-                   Competitor X in the past 7 days. Return structured summary."
-→ Research Agent: "Same for Competitor Y."
-→ Research Agent: "Same for Competitor Z."
-[Three parallel calls — Research Agent handles each independently]
-```
-
-#### Step 2: Research Agent Executes (Three Parallel Instances)
-
-```
-[Research Agent — Competitor X]
-
-OBSERVE: "Task: find recent news and product changes for Competitor X."
-THINK:   "I'll search for news first, then check their product page for changes."
-
-ACT: → web_search("Competitor X news announcements last 7 days")
-OBSERVE: [Returns 12 results]
-
-ACT: → web_search("Competitor X product pricing changes 2024")
-OBSERVE: [Returns 4 relevant results]
-
-ACT: → news_api(company="Competitor X", days=7)
-OBSERVE: [Returns 3 press releases]
-
-THINK: "I have sufficient information. Structuring the summary now."
-
-OUTPUT (returned to Orchestrator):
-{
-  "competitor": "X",
-  "news_summary": "Competitor X announced a Series C funding round of $85M on 
-                   March 10. CEO stated expansion into enterprise segment.",
-  "product_changes": "Launched new API tier on March 8. Pricing reduced 15% 
-                      for mid-market accounts.",
-  "sources": ["TechCrunch March 10", "Competitor X blog March 8"]
-}
-```
-
-*[Identical process runs simultaneously for Competitors Y and Z]*
-
-#### Step 3: Orchestrator Routes Research Output to Analysis Agent
-
-```
-[Orchestrator]
-OBSERVE: "Research outputs received for X, Y, and Z."
-THINK:   "All three research tasks are complete. 
-          Passing combined output to Analysis Agent."
-
-→ Analysis Agent receives: combined research summaries for X, Y, Z
-                           + internal market position data
-                           + last week's report for comparison
-```
-
-#### Step 4: Analysis Agent Processes and Interprets
-
-```
-[Analysis Agent]
-
-OBSERVE: "Three competitor summaries received. Internal data available."
-
-THINK: "Competitor X's funding and enterprise pivot is the most significant 
-        development. Combined with Y's pricing changes, this suggests 
-        increasing pressure on our mid-market positioning.
-        I need to quantify the pricing gap before drawing conclusions."
-
-ACT: → internal_data_query("our mid-market pricing vs. Competitor X and Y")
-OBSERVE: [Returns pricing comparison table]
-
-ACT: → calculator("Competitor X new price / our equivalent tier price")
-OBSERVE: "Competitor X is now 18% cheaper than us in mid-market tier."
-
-THINK: "This is actionable. The strategic implication is clear: 
-        our mid-market pricing is now significantly above X and Y. 
-        This is the primary recommendation for the executive summary."
-
-OUTPUT (returned to Orchestrator):
-{
-  "key_finding": "X and Y have both reduced mid-market pricing in the past 7 days.
-                  Combined effect: our mid-market tier is now 15-18% above 
-                  nearest competitor.",
-  "strategic_implication": "Increased churn risk in mid-market segment. 
-                             Pricing review recommended before Q2.",
-  "supporting_data": [pricing comparison table, funding announcement context]
-}
-```
-
-#### Step 5: Orchestrator Routes to Writing Agent
-
-```
-[Orchestrator]
-OBSERVE: "Analysis complete. Routing to Writing Agent with full context."
-
-→ Writing Agent receives: research summaries + analysis output + report template
-```
-
-#### Step 6: Writing Agent Produces Final Report
-
-```
-[Writing Agent]
-
-OBSERVE: "Full context received. Template specifies: executive summary first, 
-          then findings by competitor, then recommendations."
-
-THINK:   "The pricing story is the lead. I'll structure the executive summary 
-          around that finding, then support it with the per-competitor details."
-
-ACT: → document_create(template="ci_report_standard")
-ACT: → document_write(section="executive_summary", 
-                      content=[synthesized from analysis output])
-ACT: → document_write(section="competitor_x", content=[from research + analysis])
-... [continues for Y and Z]
-ACT: → document_write(section="recommendations", content=[from analysis output])
-
-OUTPUT: Completed report document → returned to Orchestrator
-```
-
-#### Step 7: Orchestrator Delivers Final Output
-
-```
-[Orchestrator]
-OBSERVE: "Report complete."
-THINK:   "Verify completeness against template requirements. 
-          All sections present. Word count within range. 
-          Delivering to requestor."
-
-ACT: → send_report(to="bd_team@company.com", document=completed_report)
-
-OUTPUT: "Weekly CI report delivered. 
-         Key finding: mid-market pricing gap of 15-18% vs. X and Y. 
-         Recommend pricing review before Q2."
-```
-
-### What This Simulation Reveals
-
-Walking through this workflow step-by-step exposes the design decisions that determine whether a multi-agent system works in production:
-
-- **Context isolation is deliberate:** Each agent receives only what it needs. The Research Agent does not see the analysis prompt; the Writing Agent does not query live data. This keeps each agent's reasoning focused and its context window manageable.
-- **The orchestrator does not execute:** It only reasons about delegation and synthesis. Keeping execution in the worker agents preserves a clean separation of concerns and makes each agent independently testable.
-- **Parallelism is a design choice, not automatic:** The three research calls are parallel because the orchestrator explicitly delegates them simultaneously. This requires the platform or runtime to support concurrent agent execution.
-- **The handoff format matters:** The structured JSON outputs from the Research and Analysis Agents make the downstream agents' work deterministic. Unstructured outputs would force the Analysis and Writing Agents to parse ambiguous text — introducing error surface.
 
 ---
 
-## 3. Risks, Failures, and Coordination Mechanisms (10 min)
+### Step-by-Step: How the Workflow Runs
+
+#### Step 1: Orchestrator receives the goal and delegates
+
+```
+Goal arrives:
+"Generate this week's competitive intelligence report for Competitors X, Y, and Z."
+
+Orchestrator thinks:
+"This needs three types of work: research, analysis, and writing.
+ Research must happen first. Analysis depends on research.
+ Writing depends on analysis.
+ I'll run research for all three competitors at the same time,
+ then pass the results to the Analysis Agent."
+
+Orchestrator delegates:
+→ Research Agent: "Find all news and product changes for Competitor X in the past 7 days."
+→ Research Agent: "Do the same for Competitor Y."
+→ Research Agent: "Do the same for Competitor Z."
+[All three run at the same time]
+```
+
+#### Step 2: Research Agent gathers information (three parallel instances)
+
+```
+Research Agent — Competitor X:
+
+Searches for: "Competitor X news last 7 days"
+Searches for: "Competitor X product pricing changes"
+Checks their press releases
+
+Returns to Orchestrator:
+- News summary: "Competitor X raised $85M and announced expansion into enterprise."
+- Product change: "New pricing tier launched — 15% cheaper for mid-market customers."
+- Sources: TechCrunch, Competitor X blog
+```
+
+*The same process runs simultaneously for Competitors Y and Z.*
+
+#### Step 3: Orchestrator routes research to the Analysis Agent
+
+```
+Orchestrator:
+"All three research summaries are in.
+ Sending them to the Analysis Agent with the internal pricing data."
+
+Analysis Agent receives:
+- Research summaries for X, Y, and Z
+- Internal data about the company's own pricing
+- Last week's report for comparison
+```
+
+#### Step 4: Analysis Agent interprets and draws conclusions
+
+```
+Analysis Agent thinks:
+"Both X and Y reduced mid-market pricing this week.
+ Let me compare that to our own mid-market pricing."
+
+Checks internal data → finds: our price is now 18% above Competitor X.
+
+Conclusion:
+"This is significant. We are now noticeably more expensive than our two
+ closest competitors in the mid-market segment. This creates churn risk
+ before Q2. A pricing review should be recommended."
+
+Returns to Orchestrator:
+- Key finding: pricing gap of 15-18% vs. X and Y
+- Strategic implication: churn risk in mid-market
+- Recommendation: pricing review before Q2
+```
+
+#### Step 5: Writing Agent produces the final report
+
+```
+Writing Agent receives:
+- Research summaries
+- Analysis output
+- Standard report template
+
+Writes:
+- Executive summary (leads with the pricing story — most important finding)
+- Competitor-by-competitor section (facts + implications)
+- Recommendations section
+
+Returns: Completed report document
+```
+
+#### Step 6: Orchestrator delivers
+
+```
+Orchestrator:
+"Report is complete. Sending to the business development team."
+
+→ Report delivered via email
+→ Summary message: "Key finding this week: mid-market pricing gap of 15–18%
+                    vs. Competitors X and Y. Pricing review recommended before Q2."
+```
+
+---
+
+### What This Simulation Reveals
+
+Walking through this workflow step by step makes visible the design decisions that determine whether the system works:
+
+<img width="934" height="311" alt="image" src="https://git.generalassemb.ly/user-attachments/assets/7bef3105-5385-4f20-8f76-d52a64c7060b" />
+
+
+---
+
+## 3. Risks, Failures, and How to Handle Them (20 min)
 
 ### Multi-Agent Systems Fail Differently
 
-Single-agent failures are relatively straightforward: the agent reasons incorrectly, calls the wrong tool, or produces a bad output. Multi-agent failures are more complex because they can emerge from the interaction between agents, not just from any individual agent's behavior.
+Single-agent failures are relatively straightforward: the agent reasons incorrectly, calls the wrong tool, or produces a bad output. Multi-agent failures are more complex because they can emerge from the *interaction between agents* — not just from any individual agent's behavior.
 
-<img width="931" height="391" alt="image" src="https://git.generalassemb.ly/user-attachments/assets/76aaba06-03ef-4178-9f95-38104db0271b" />
+---
 
+### Failure 1: Cascading Errors
+
+In a sequential or hierarchical system, an error in an upstream agent travels to every agent below it. Each subsequent agent treats the incorrect output as fact and builds on it.
+
+```
+Research Agent returns wrong pricing data
+         ↓
+Analysis Agent calculates implications from wrong numbers
+         ↓
+Writing Agent produces recommendations based on flawed analysis
+         ↓
+Team receives a report with incorrect conclusions —
+and has no visibility into where the error started
+```
+
+**Why it's dangerous:** By the time the error reaches the end of the chain, it has been transformed and amplified. The original mistake is invisible in the final output.
+
+**How to handle it:**  
+Add a **checkpoint** between agents for high-risk transitions. Before passing output downstream, a simple check verifies that the output is complete and in the expected format. If it fails the check, the output goes back to the previous agent with an explanation of what's missing.
+
+```
+Research Agent output →
+[Checkpoint: Are all required fields present? Is the data in the expected format?]
+→ PASS: send to Analysis Agent
+→ FAIL: return to Research Agent with description of what's missing
+```
+
+---
+
+### Failure 2: Lost Context at Handoff
+
+When one agent passes its output to the next, critical background context can get lost in translation. The receiving agent gets the data but not the context needed to interpret it correctly.
+
+```
+Research Agent sends:
+"Competitor X announced enterprise expansion."
+
+Analysis Agent receives this without background context and reasons:
+"Enterprise expansion is a standard growth move. Low strategic urgency."
+
+What the Analysis Agent didn't know:
+Our company gets 78% of its revenue from enterprise customers.
+Competitor X entering enterprise is a direct existential threat — not a routine move.
+```
+
+**Why it happens:** Each agent is focused on its own task. It doesn't know what the next agent needs to know in order to do its job well.
+
+**How to handle it:**  
+Define a **standard handoff format** that includes not just the output, but the context needed to interpret it — the original goal, relevant constraints, and any flags the next agent should be aware of.
+
+```
+Handoff from Research Agent to Analysis Agent:
+- Task completed: Research on Competitor X
+- Finding: Enterprise expansion announced
+- Context for Analysis Agent: Our company is 78% enterprise-dependent.
+  This development has high strategic relevance — flag as priority.
+- Original goal reminder: Identify competitive threats to our enterprise business
+```
+
+---
+
+### Failure 3: Conflicting Outputs
+
+In cooperative systems — or in hierarchical systems where multiple workers run in parallel — agents can produce outputs that contradict each other. Without a way to resolve the conflict, the system gets stuck or produces a confused final result.
+
+```
+Analysis Agent A concludes:
+"Competitor X's funding signals aggressive expansion —
+ immediate pricing response recommended."
+
+Analysis Agent B concludes:
+"Competitor X's funding is standard for this stage —
+ monitor but no action needed yet."
+
+Orchestrator receives both. No resolution defined.
+Result: The orchestrator either picks one arbitrarily or produces no recommendation.
+```
+
+**How to handle it:**  
+Define in advance how conflicts get resolved. The simplest options:
+
+| Resolution approach | How it works | Best for |
+|---|---|---|
+| **Orchestrator decides** | The orchestrator agent receives both outputs and reasons to a final decision | Complex or subjective decisions |
+| **Human escalation** | Conflict is flagged to a human reviewer | High-stakes decisions where machine resolution is insufficient |
+| **Most conservative wins** | When in doubt, choose the option that carries less risk | Risk-sensitive contexts |
+
+The key principle: **don't leave conflict resolution undefined**. An unresolved conflict always produces a worse outcome than a defined resolution protocol — even an imperfect one.
+
+---
+
+### Failure 4: The Orchestrator Gets It Wrong
+
+In hierarchical systems, the orchestrator is the single point of failure for task decomposition. If it misjudges how to split the task, all the downstream work goes in the wrong direction — even if every worker agent executes perfectly.
+
+```
+Orchestrator misreads the goal:
+"Generate a competitive intelligence report"
+→ Orchestrator interprets this as a market size report
+→ Delegates research on market growth rates, not competitor activities
+
+Workers do exactly what they were asked.
+Final output: a market analysis, not a competitive intelligence report.
+```
+
+**How to handle it:**  
+Two practices reduce orchestrator errors significantly:
+
+1. **Be explicit in the goal**: The instruction given to the orchestrator should spell out what success looks like, not just what the task is. *"Generate a competitive intelligence report covering: recent news, product changes, pricing movements, and strategic recommendations."*
+
+2. **Have the orchestrator confirm its plan before acting**: Prompt the orchestrator to describe how it plans to decompose the task before delegating. A human can review and correct the plan before any workers are called.
+
+---
 
 ### The Coordination Design Checklist
 
-Before deploying a multi-agent system:
+Before deploying a multi-agent system, verify:
 
-| Design Decision | Defined? |
-|---|---|
-| Coordination model selected and justified | <div align="center">☐</div> |
-| Agent roles and responsibilities clearly separated | <div align="center">☐</div> |
-| Handoff format standardized across all agent pairs | <div align="center">☐</div> |
-| Output validation gates defined for high-risk transitions | <div align="center">☐</div> |
-| Conflict resolution protocol defined | <div align="center">☐</div> |
-| Circular dependency check completed | <div align="center">☐</div> |
-| Timeout and fallback policies defined for each inter-agent communication | <div align="center">☐</div> |
-| Injection defenses applied at every agent input boundary | <div align="center">☐</div> |
-| Observability configured: full interaction trace across all agents | <div align="center">☐</div> |
+<img width="703" height="399" alt="image" src="https://git.generalassemb.ly/user-attachments/assets/8fd4bd79-4037-4094-8fb5-bc766480c7f8" />
 
 ---
 
@@ -338,9 +398,10 @@ Before deploying a multi-agent system:
 
 ## 6. Wrap-Up & Reflection (5 min)
 
-
-
-> Next session: **Integration with Business Data** 
+### Key Takeaways
+- Specialize Agents Like You'd Specialize a Team
+- The Handoff Is as Important as the Work
+- Design for Failure, Not Just for Success
 
 ---
 
@@ -349,6 +410,6 @@ Before deploying a multi-agent system:
 - [CrewAI — Multi-Agent Coordination Documentation](https://docs.crewai.com/concepts/crews)
 - [LangGraph — Multi-Agent Workflows](https://langchain-ai.github.io/langgraph/tutorials/multi_agent/multi_agent_collaboration/)
 - [AutoGen — Microsoft Multi-Agent Framework](https://microsoft.github.io/autogen/)
-- Chase, H. — *LangChain Blog: Multi-Agent Systems* (2024)
+- [Flowise — Multi-Agent Flow Setup](https://docs.flowiseai.com/)
 - Lilian Weng — *LLM-powered Autonomous Agents: Planning* (2023) — [lilianweng.github.io](https://lilianweng.github.io/posts/2023-06-23-agent/#planning)
-- OWASP — *Top 10 for LLMs: Insecure Plugin Design and Excessive Agency* (2023)
+- OWASP — *Top 10 for LLMs: Excessive Agency* (2023)
