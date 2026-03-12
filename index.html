@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Agent Team Simulation — General Assembly BAA 9.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --black:#0d0d0d;--black2:#1a1a1a;--black3:#252525;--black4:#333;
+  --line:#2e2e2e;--line2:#404040;--gray-dk:#555;--gray:#888;
+  --gray-lt:#bbb;--white:#fff;
+  --GA-red:#e8333a;--GA-red2:#ff4a50;
+  --yellow:#f5c518;--green:#22c55e;--blue:#3b82f6;--purple:#a855f7;
+  --teal:#14b8a6;--orange:#f97316;--pink:#ec4899;
+  --r:4px;--r-lg:10px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Barlow',sans-serif;background:var(--black);color:var(--white);font-size:16px;line-height:1.6;min-height:100vh}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--black2)}::-webkit-scrollbar-thumb{background:var(--black4);border-radius:3px}
+header{position:sticky;top:0;z-index:500;background:var(--black);border-bottom:2px solid var(--GA-red);display:flex;align-items:stretch;height:58px}
+.ga-logo{display:flex;align-items:center;gap:10px;padding:0 20px;border-right:1px solid var(--line);flex-shrink:0;cursor:pointer}
+.ga-mark{width:32px;height:32px;background:var(--GA-red);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;color:#fff;border-radius:2px}
+.ga-name{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--gray-lt);text-transform:uppercase;line-height:1.2}
+.ga-name span{display:block;font-size:10px;color:var(--gray);font-weight:600}
+.tab-bar{display:flex;align-items:stretch;overflow-x:auto;flex:1;scrollbar-width:none}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab{display:flex;align-items:center;padding:0 14px;font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;color:var(--gray);cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:color .15s,border-color .15s;position:relative;top:2px}
+.tab:hover{color:#fff}.tab.active{color:#fff;border-bottom-color:var(--GA-red)}
+.hd-end{display:flex;align-items:center;padding:0 18px;border-left:1px solid var(--line);flex-shrink:0}
+.prog-chip{background:var(--GA-red);color:#fff;font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 12px;border-radius:20px}
+.section{display:none}.section.active{display:block}
+.wrap{max-width:880px;margin:0 auto;padding:48px 24px 80px}
+.eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--GA-red);margin-bottom:10px;display:block}
+h1{font-family:'Barlow Condensed',sans-serif;font-size:clamp(2.4rem,6vw,3.8rem);font-weight:900;line-height:1.05;color:#fff;margin-bottom:16px}
+h1 .red{color:var(--GA-red)}
+h2{font-family:'Barlow Condensed',sans-serif;font-size:clamp(1.7rem,4vw,2.4rem);font-weight:800;line-height:1.1;color:#fff;margin-bottom:8px}
+h2 .red{color:var(--GA-red)}
+.lead{font-size:1.05rem;color:var(--gray-lt);line-height:1.7;margin-bottom:28px;max-width:640px}
+.hr{height:1px;background:var(--line);margin:36px 0}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:var(--r);font-family:'Barlow',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;border:2px solid transparent;transition:all .15s;white-space:nowrap}
+.btn-red{background:var(--GA-red);color:#fff;border-color:var(--GA-red)}.btn-red:hover{background:var(--GA-red2);transform:translateY(-1px)}
+.btn-green{background:var(--green);color:var(--black)}.btn-green:hover{background:#16a34a;transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--gray-lt);border:2px solid var(--line2);padding:10px 20px;font-size:.88rem;font-weight:600;cursor:pointer;border-radius:var(--r);transition:all .15s}.btn-ghost:hover{border-color:var(--gray);color:#fff}
+.card{background:var(--black2);border:1px solid var(--line);border-radius:var(--r-lg);padding:28px;margin-bottom:16px}
+.card-rb{border-top:3px solid var(--GA-red)}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.b-green{background:rgba(34,197,94,.18);color:var(--green)}.b-red{background:rgba(232,51,58,.18);color:var(--GA-red)}.b-yellow{background:rgba(245,197,24,.18);color:var(--yellow)}.b-blue{background:rgba(59,130,246,.18);color:var(--blue)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes flow{0%{stroke-dashoffset:20}100%{stroke-dashoffset:0}}
+.a1{animation:fadeUp .35s ease both}.a2{animation:fadeUp .35s .1s ease both}.a3{animation:fadeUp .35s .2s ease both}
+.hero-kicker{display:inline-flex;align-items:center;gap:8px;background:var(--black3);border:1px solid var(--line);border-radius:var(--r);padding:6px 14px;margin-bottom:20px;font-size:12px;font-weight:600;color:var(--gray-lt);letter-spacing:.04em}
+.hero-kicker .dot{width:8px;height:8px;background:var(--GA-red);border-radius:50%}
+.obj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;margin-bottom:32px}
+.obj-card{background:var(--black2);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px;display:flex;gap:14px}
+.obj-num{font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:900;color:var(--GA-red);line-height:1;flex-shrink:0}
+.obj-body{font-size:.9rem;color:var(--gray-lt);line-height:1.55;padding-top:4px}
+.roadmap{display:flex;flex-direction:column}
+.rm-item{display:flex;align-items:flex-start;gap:16px;padding:14px 0;border-bottom:1px solid var(--line)}
+.rm-item:last-child{border-bottom:none}
+.rm-dot{width:36px;height:36px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;border:2px solid var(--line);background:var(--black3);color:var(--gray);transition:all .25s}
+.rm-dot.done{background:var(--green);border-color:var(--green);color:var(--black)}
+.rm-dot.active{background:var(--GA-red);border-color:var(--GA-red);color:#fff}
+.rm-label{font-size:.95rem;font-weight:600;color:var(--gray);padding-top:6px}
+.rm-label.active{color:#fff}.rm-label.done{color:var(--green);text-decoration:line-through}
+.rm-sub{font-size:.8rem;color:var(--gray-dk);margin-top:2px}
+.callout{border-radius:var(--r-lg);padding:14px 16px;margin:12px 0;font-size:.88rem;line-height:1.65}
+.callout-tip{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);color:#93c5fd}
+.callout-warn{background:rgba(245,197,24,.08);border:1px solid rgba(245,197,24,.2);color:#fde68a}
+.callout-success{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);color:#86efac}
+.callout-purple{background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.25);color:#d8b4fe}
+.callout strong{color:#fff}
+
+/* ── ARCHITECTURE DIAGRAM ──────────────────────────────── */
+.arch-diagram{display:flex;align-items:center;gap:0;flex-wrap:wrap;margin-bottom:28px;justify-content:center}
+.agent-box{border-radius:var(--r-lg);padding:18px 22px;min-width:160px;text-align:center;border:2px solid;position:relative}
+.agent-box .a-icon{font-size:1.8rem;display:block;margin-bottom:6px}
+.agent-box .a-label{font-family:'Barlow Condensed',sans-serif;font-size:.82rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;display:block}
+.agent-box .a-sub{font-size:.72rem;margin-top:3px;display:block;opacity:.65}
+.agent-arrow{display:flex;flex-direction:column;align-items:center;padding:0 8px;flex-shrink:0}
+.agent-arrow svg{flex-shrink:0}
+.arrow-label{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--gray-dk);text-align:center;margin-top:2px;max-width:80px;line-height:1.3}
+
+/* ── DRAG DROP ─────────────────────────────────────────── */
+.drag-pool{background:var(--black3);border:1px solid var(--line);border-radius:var(--r-lg);padding:16px;margin-bottom:18px}
+.pool-label{font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gray-dk);margin-bottom:10px}
+.drag-chips{display:flex;flex-wrap:wrap;gap:8px;min-height:36px}
+.drag-chip{display:inline-flex;padding:8px 14px;border-radius:20px;background:var(--black2);border:1.5px solid var(--line2);color:var(--gray-lt);font-size:.83rem;font-weight:600;cursor:grab;user-select:none;transition:all .15s;line-height:1.3}
+.drag-chip:hover{border-color:var(--GA-red);color:#fff}
+.drag-chip.correct{background:rgba(34,197,94,.12);border-color:var(--green);color:var(--green);cursor:default}
+.drag-chip.wrong{background:rgba(232,51,58,.12);border-color:var(--GA-red);color:var(--GA-red);cursor:default}
+.dz{border-radius:var(--r-lg);overflow:hidden;margin-bottom:10px}
+.dz-head{padding:12px 18px;display:flex;align-items:center;gap:10px}
+.dz-title{font-family:'Barlow Condensed',sans-serif;font-size:.88rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase}
+.dz-sub{font-size:.74rem;color:rgba(255,255,255,.38);margin-top:1px}
+.dz-body{background:var(--black2);border:1px solid var(--line);border-top:none;border-radius:0 0 var(--r-lg) var(--r-lg);padding:12px;min-height:68px;display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start;transition:background .15s}
+.dz-body.over{background:var(--black3)}
+
+/* ── SEQUENCER ─────────────────────────────────────────── */
+.seq-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.seq-item{display:flex;align-items:flex-start;gap:12px;background:var(--black2);border:2px solid var(--line);border-radius:var(--r-lg);padding:13px 16px;cursor:grab;user-select:none;transition:all .18s}
+.seq-item.drag-over{border-color:var(--GA-red);background:rgba(232,51,58,.04)}
+.seq-item.correct{border-color:var(--green);background:rgba(34,197,94,.04)}
+.seq-item.wrong{border-color:var(--GA-red)}
+.seq-handle{color:var(--gray-dk);flex-shrink:0;padding-top:2px}
+.seq-pos{width:28px;height:28px;border-radius:6px;flex-shrink:0;background:var(--black3);border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:700;color:var(--gray)}
+.seq-item.correct .seq-pos{background:var(--green);border-color:var(--green);color:var(--black)}
+.seq-item.wrong .seq-pos{background:var(--GA-red);border-color:var(--GA-red);color:#fff}
+.seq-text{font-size:.9rem;color:var(--gray-lt);line-height:1.55;flex:1}
+.seq-agent{font-family:'Barlow Condensed',sans-serif;font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:3px;flex-shrink:0;margin-top:3px}
+
+/* ── SIMULATOR ─────────────────────────────────────────── */
+.sim-topic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:8px;margin-bottom:18px}
+.topic-btn{background:var(--black2);border:2px solid var(--line);border-radius:var(--r-lg);padding:14px 14px;cursor:pointer;transition:all .16s;text-align:left}
+.topic-btn:hover{border-color:var(--GA-red);background:rgba(232,51,58,.04)}
+.topic-btn.selected{border-color:var(--GA-red);background:rgba(232,51,58,.08)}
+.topic-icon{font-size:1.3rem;display:block;margin-bottom:6px}
+.topic-name{font-size:.88rem;font-weight:700;color:var(--gray-lt);line-height:1.3;display:block}
+.topic-btn.selected .topic-name{color:#fff}
+.sim-stage{border-radius:var(--r-lg);overflow:hidden;margin-bottom:12px}
+.stage-head{padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.stage-title{font-family:'Barlow Condensed',sans-serif;font-size:.82rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em}
+.stage-status{font-family:'JetBrains Mono',monospace;font-size:.7rem;padding:3px 10px;border-radius:20px;font-weight:700}
+.status-idle{background:var(--black4);color:var(--gray)}
+.status-running{background:rgba(245,197,24,.18);color:var(--yellow);animation:pulse 1.2s infinite}
+.status-done{background:rgba(34,197,94,.18);color:var(--green)}
+.status-waiting{background:rgba(59,130,246,.18);color:var(--blue)}
+.stage-body{background:var(--black2);border:1px solid var(--line);border-top:none;border-radius:0 0 var(--r-lg) var(--r-lg);padding:16px 18px;min-height:80px;font-size:.88rem;color:var(--gray-lt);line-height:1.7}
+.stage-body pre{font-family:'JetBrains Mono',monospace;font-size:.78rem;white-space:pre-wrap;word-break:break-word;color:var(--gray-lt)}
+.handoff-arrow{display:flex;align-items:center;gap:12px;padding:10px 18px;margin-bottom:12px;background:var(--black3);border-radius:var(--r-lg);border:1px dashed var(--line2)}
+.handoff-icon{font-size:1rem;flex-shrink:0}
+.handoff-label{font-size:.8rem;font-weight:600;color:var(--gray-dk);flex:1}
+.handoff-arrow.active{border-color:var(--blue);background:rgba(59,130,246,.07)}
+.handoff-arrow.active .handoff-label{color:var(--blue)}
+.typing-cursor{display:inline-block;width:2px;height:1em;background:var(--GA-red);margin-left:2px;animation:pulse .7s infinite;vertical-align:middle}
+/* inspect annotations */
+.annotated-text{position:relative;font-size:.92rem;line-height:1.9;color:var(--gray-lt)}
+.ann{border-radius:3px;padding:0 3px;cursor:help;position:relative}
+.ann-research{background:rgba(59,130,246,.18);border-bottom:2px solid var(--blue);color:#bfdbfe}
+.ann-synthesis{background:rgba(168,85,247,.18);border-bottom:2px solid var(--purple);color:#e9d5ff}
+.ann-opinion{background:rgba(245,197,24,.12);border-bottom:2px solid var(--yellow);color:#fde68a}
+.ann-gap{background:rgba(232,51,58,.12);border-bottom:2px solid var(--GA-red);color:#fca5a5}
+.ann-tooltip{display:none;position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:var(--black3);border:1px solid var(--line2);border-radius:var(--r);padding:6px 10px;font-size:.72rem;color:#fff;white-space:nowrap;z-index:10;pointer-events:none;margin-bottom:4px}
+.ann:hover .ann-tooltip{display:block}
+.legend-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--gray-lt)}
+.legend-swatch{width:12px;height:12px;border-radius:2px}
+/* failure classify */
+.fail-item{padding:16px 0;border-bottom:1px solid var(--line)}
+.fail-item:last-child{border-bottom:none}
+.fail-q{font-size:.92rem;font-weight:600;color:var(--gray-lt);line-height:1.55;margin-bottom:10px}
+.fail-opts{display:flex;gap:6px;flex-wrap:wrap}
+.fail-opt{padding:7px 16px;border-radius:20px;border:1.5px solid var(--line2);background:var(--black3);font-size:.8rem;font-weight:700;cursor:pointer;transition:all .15s;color:var(--gray)}
+.fail-opt:hover{border-color:var(--blue);color:#fff}
+.fail-opt.selected-correct{background:rgba(34,197,94,.12);border-color:var(--green);color:var(--green);cursor:default}
+.fail-opt.selected-wrong{background:rgba(232,51,58,.1);border-color:var(--GA-red);color:var(--GA-red);cursor:default}
+.fail-opt.reveal-correct{border-color:var(--green);color:var(--green)!important}
+.fail-opt.disabled{cursor:default;opacity:.7}
+.fail-fb{display:none;font-size:.84rem;color:var(--gray-lt);line-height:1.65;padding:10px 14px;background:var(--black3);border-radius:var(--r);margin-top:8px}
+.fail-fb.show{display:block}
+/* quiz */
+.qz-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+.qz-meta span{font-size:.85rem;color:var(--gray)}
+.prog-bar{height:4px;background:var(--black3);border-radius:2px;margin-bottom:28px;overflow:hidden}
+.prog-fill{height:100%;background:var(--GA-red);border-radius:2px;transition:width .4s}
+.quiz-q{font-family:'Barlow Condensed',sans-serif;font-size:1.35rem;font-weight:700;line-height:1.3;color:#fff;margin-bottom:20px}
+.q-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.q-opt{background:var(--black2);border:2px solid var(--line);border-radius:var(--r-lg);padding:14px 18px;cursor:pointer;display:flex;align-items:flex-start;gap:14px;font-size:.93rem;color:var(--gray-lt);transition:all .16s;text-align:left;width:100%}
+.q-opt:hover:not(.disabled){border-color:var(--GA-red);color:#fff;background:rgba(232,51,58,.05)}
+.q-opt.correct{border-color:var(--green);background:rgba(34,197,94,.07);color:#fff}
+.q-opt.wrong{border-color:var(--GA-red);background:rgba(232,51,58,.08);color:#fff}
+.q-opt.disabled{cursor:default}
+.q-opt-k{width:30px;height:30px;border-radius:6px;flex-shrink:0;background:var(--black3);border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:700;color:var(--gray)}
+.q-opt.correct .q-opt-k{background:var(--green);border-color:var(--green);color:var(--black)}
+.q-opt.wrong .q-opt-k{background:var(--GA-red);border-color:var(--GA-red);color:#fff}
+.q-opt:hover:not(.disabled) .q-opt-k{border-color:var(--GA-red);color:var(--GA-red)}
+.fb-box{display:none;border-radius:var(--r-lg);padding:14px 18px;font-size:.9rem;line-height:1.6;margin-bottom:14px}
+.fb-box.show{display:flex;gap:10px;align-items:flex-start}
+.fb-box.ok{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:#86efac}
+.fb-box.bad{background:rgba(232,51,58,.1);border:1px solid rgba(232,51,58,.3);color:#fca5a5}
+/* results */
+.results-ring{position:relative;width:120px;height:120px;flex-shrink:0}
+.results-ring-txt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-pct{font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:900;line-height:1}
+.ring-sub{font-size:.7rem;color:var(--gray);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
+.score-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.score-row:last-child{border-bottom:none}
+.score-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.score-bar-wrap{width:80px;height:3px;background:var(--black3);border-radius:2px;flex-shrink:0}
+.score-bar-fill{height:100%;border-radius:2px}
+.tk-item{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+.tk-item:last-child{border-bottom:none}
+.tk-num{font-family:'Barlow Condensed',sans-serif;font-size:1.6rem;font-weight:900;color:var(--GA-red);flex-shrink:0;line-height:1;padding-top:2px}
+.tk-txt{font-size:.92rem;color:var(--gray-lt);line-height:1.65}
+/* custom input */
+.custom-input{background:var(--black3);border:1px solid var(--line);border-radius:var(--r-lg);padding:10px 14px;color:#fff;font-family:'Barlow',sans-serif;font-size:.9rem;outline:none;width:100%;max-width:400px}
+.custom-input:focus{border-color:var(--GA-red)}
+.custom-input::placeholder{color:var(--gray-dk)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="ga-logo" onclick="nav('intro')">
+    <div class="ga-mark">GA</div>
+    <div class="ga-name">General Assembly<span>Build AI Agents · BAA 9.0</span></div>
+  </div>
+  <div class="tab-bar">
+    <div class="tab active" onclick="nav('intro')"   id="t-intro">⬡ Overview</div>
+    <div class="tab"        onclick="nav('why')"     id="t-why">◈ Why Teams?</div>
+    <div class="tab"        onclick="nav('arch')"    id="t-arch">⌖ Architecture</div>
+    <div class="tab"        onclick="nav('flow')"    id="t-flow">↻ Message Flow</div>
+    <div class="tab"        onclick="nav('sim')"     id="t-sim">▶ Live Simulation</div>
+    <div class="tab"        onclick="nav('inspect')" id="t-inspect">🔬 Inspect Output</div>
+    <div class="tab"        onclick="nav('failure')" id="t-failure">⚠ Failure Modes</div>
+    <div class="tab"        onclick="nav('quiz')"    id="t-quiz">◇ Check</div>
+    <div class="tab"        onclick="nav('results')" id="t-results">★ Results</div>
+  </div>
+  <div class="hd-end"><div class="prog-chip" id="progressChip">0 / 5</div></div>
+</header>
+
+<!-- ══════════════ INTRO ══════════════ -->
+<div class="section active" id="s-intro">
+<div class="wrap">
+  <div class="a1" style="padding-bottom:40px;border-bottom:1px solid var(--line);margin-bottom:36px">
+    <div class="hero-kicker"><div class="dot"></div>Hands-On Lab &nbsp;·&nbsp; Module 9 &nbsp;·&nbsp; BAA 9.0</div>
+    <h1>Agent Team<br/><span class="red">Simulation</span></h1>
+    <p class="lead">One agent researches. One agent writes. Together they produce something neither could alone — and the handoff between them is where all the interesting engineering happens. In this lab you design the architecture, sequence the message flow, and watch two real AI agents collaborate live.</p>
+    <button class="btn btn-red" onclick="nav('why')">Start Lab →</button>
+  </div>
+
+  <span class="eyebrow">What You'll Do</span>
+  <div class="obj-grid a2">
+    <div class="obj-card"><div class="obj-num">⌖</div><div class="obj-body"><strong style="color:#fff">Design the architecture</strong> — assign the right responsibilities to the Research Agent vs. Writer Agent vs. Orchestrator.</div></div>
+    <div class="obj-card"><div class="obj-num">↻</div><div class="obj-body"><strong style="color:#fff">Sequence the message flow</strong> — drag 8 steps into the exact order that a two-agent pipeline follows.</div></div>
+    <div class="obj-card"><div class="obj-num">▶</div><div class="obj-body"><strong style="color:#fff">Run a live simulation</strong> — watch two real Claude instances pass a structured handoff message and produce a polished summary.</div></div>
+    <div class="obj-card"><div class="obj-num">🔬</div><div class="obj-body"><strong style="color:#fff">Inspect the output</strong> — annotate exactly which parts of the final summary came from research vs. synthesis vs. inference.</div></div>
+  </div>
+
+  <div class="hr"></div>
+  <span class="eyebrow">Roadmap</span>
+  <div class="card a3">
+    <div class="roadmap">
+      <div class="rm-item"><div class="rm-dot active" id="dot-why">—</div><div><div class="rm-label active" id="lbl-why">Why Agent Teams? The case for multi-agent systems</div><div class="rm-sub">Explore the three problems that make one agent insufficient — and why specialization wins</div></div></div>
+      <div class="rm-item"><div class="rm-dot" id="dot-arch">1</div><div><div class="rm-label" id="lbl-arch">Architecture Drag-and-Drop</div><div class="rm-sub">Assign 12 responsibilities and capabilities to the correct agent role</div></div></div>
+      <div class="rm-item"><div class="rm-dot" id="dot-flow">2</div><div><div class="rm-label" id="lbl-flow">Message Flow Sequencer</div><div class="rm-sub">Reorder 8 pipeline steps into the correct execution order — the handoff message is the key</div></div></div>
+      <div class="rm-item"><div class="rm-dot" id="dot-sim">3</div><div><div class="rm-label" id="lbl-sim">Live Two-Agent Simulation</div><div class="rm-sub">Pick a topic, watch Agent 1 (Research) and Agent 2 (Writer) collaborate in real time</div></div></div>
+      <div class="rm-item"><div class="rm-dot" id="dot-inspect">4</div><div><div class="rm-label" id="lbl-inspect">Output Inspection &amp; Annotation</div><div class="rm-sub">Read the Writer Agent's output — identify which parts are raw research vs. synthesis vs. inference</div></div></div>
+      <div class="rm-item"><div class="rm-dot" id="dot-failure">5</div><div><div class="rm-label" id="lbl-failure">Multi-Agent Failure Mode Classification</div><div class="rm-sub">Classify 6 real failure modes — which agent caused it? Which step in the pipeline broke?</div></div></div>
+      <div class="rm-item"><div class="rm-dot" id="dot-quiz">—</div><div><div class="rm-label" id="lbl-quiz">Knowledge Check · 7 questions · 70% to pass</div></div></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════ WHY TEAMS ══════════════ -->
+<div class="section" id="s-why">
+<div class="wrap">
+  <span class="eyebrow">The Motivation</span>
+  <h2>Why One Agent <span class="red">Isn't Enough</span></h2>
+  <p class="lead">Before you build a team, you need to understand the three problems that make single-agent systems break down — and why splitting responsibilities between specialized agents fixes each one.</p>
+
+  <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:32px">
+    <div style="background:var(--black2);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px 22px">
+      <div style="display:flex;align-items:flex-start;gap:14px">
+        <div style="font-size:1.6rem;flex-shrink:0">🧠</div>
+        <div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:6px">Problem 1 — Context Window Contamination</div>
+          <p style="font-size:.92rem;color:var(--gray-lt);line-height:1.75">When a single agent both researches AND writes, it juggles two competing cognitive modes in one context window. Research mode favors breadth — collect everything, stay neutral, flag contradictions. Writing mode favors selectivity — pick the best angle, build narrative momentum, ignore tangents. These modes contaminate each other. The result: a half-researched summary, or a paralyzed researcher who can't commit to a narrative.</p>
+          <div class="callout callout-tip" style="margin-top:8px"><strong>The fix:</strong> Separate context windows. The Research Agent's context is pure signal collection. The Writer Agent's context contains only the structured findings — not the noise.</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--black2);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px 22px">
+      <div style="display:flex;align-items:flex-start;gap:14px">
+        <div style="font-size:1.6rem;flex-shrink:0">⚙️</div>
+        <div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:6px">Problem 2 — Role Drift Under Instruction Pressure</div>
+          <p style="font-size:.92rem;color:var(--gray-lt);line-height:1.75">Ask a single agent to "research the topic and write a summary" and it will start writing before it has finished researching — because the instruction contains implicit pressure to produce visible output. The research phase gets cut short. Alternatively, it over-researches and delivers a data dump instead of a summary. The two tasks have different completion signals and the agent can't satisfy both.</p>
+          <div class="callout callout-tip" style="margin-top:8px"><strong>The fix:</strong> Each agent has one job and one completion signal. The Research Agent is done when it delivers a structured JSON handoff. The Writer Agent is done when it delivers a formatted summary.</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--black2);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px 22px">
+      <div style="display:flex;align-items:flex-start;gap:14px">
+        <div style="font-size:1.6rem;flex-shrink:0">🔁</div>
+        <div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:6px">Problem 3 — No Auditability of the Research-to-Writing Transition</div>
+          <p style="font-size:.92rem;color:var(--gray-lt);line-height:1.75">When research and writing happen inside one agent, you can't inspect what the agent "knew" before it started writing. If the summary is wrong, was it a bad research phase or a bad synthesis phase? In a two-agent system, the handoff message is a first-class artifact — you can read it, validate it, and even route it to a human reviewer before the Writer Agent sees it.</p>
+          <div class="callout callout-tip" style="margin-top:8px"><strong>The fix:</strong> The handoff message is structured and inspectable. The Orchestrator can validate, filter, or augment it before passing it downstream.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hr"></div>
+  <span class="eyebrow">The Team Structure</span>
+
+  <div class="arch-diagram a2">
+    <div class="agent-box" style="border-color:var(--GA-red);background:rgba(232,51,58,.08)">
+      <span class="a-icon">👤</span>
+      <span class="a-label" style="color:var(--GA-red)">User / Trigger</span>
+      <span class="a-sub" style="color:var(--GA-red)">Topic request</span>
+    </div>
+    <div class="agent-arrow">
+      <svg width="40" height="16" viewBox="0 0 40 16"><line x1="0" y1="8" x2="32" y2="8" stroke="#404040" stroke-width="1.5" stroke-dasharray="4 3"/><polygon points="30,4 40,8 30,12" fill="#404040"/></svg>
+      <div class="arrow-label">topic + format</div>
+    </div>
+    <div class="agent-box" style="border-color:var(--blue);background:rgba(59,130,246,.08)">
+      <span class="a-icon">🔬</span>
+      <span class="a-label" style="color:var(--blue)">Orchestrator</span>
+      <span class="a-sub" style="color:var(--blue)">Routes &amp; validates</span>
+    </div>
+    <div class="agent-arrow">
+      <svg width="40" height="16" viewBox="0 0 40 16"><line x1="0" y1="8" x2="32" y2="8" stroke="#404040" stroke-width="1.5" stroke-dasharray="4 3"/><polygon points="30,4 40,8 30,12" fill="#404040"/></svg>
+      <div class="arrow-label">research task</div>
+    </div>
+    <div class="agent-box" style="border-color:var(--teal);background:rgba(20,184,166,.08)">
+      <span class="a-icon">🔭</span>
+      <span class="a-label" style="color:var(--teal)">Research Agent</span>
+      <span class="a-sub" style="color:var(--teal)">Gather &amp; structure</span>
+    </div>
+    <div class="agent-arrow">
+      <svg width="40" height="16" viewBox="0 0 40 16"><line x1="0" y1="8" x2="32" y2="8" stroke="#a855f7" stroke-width="2" stroke-dasharray="4 3"/><polygon points="30,4 40,8 30,12" fill="#a855f7"/></svg>
+      <div class="arrow-label" style="color:var(--purple)">handoff JSON</div>
+    </div>
+    <div class="agent-box" style="border-color:var(--purple);background:rgba(168,85,247,.08)">
+      <span class="a-icon">✍️</span>
+      <span class="a-label" style="color:var(--purple)">Writer Agent</span>
+      <span class="a-sub" style="color:var(--purple)">Synthesize &amp; write</span>
+    </div>
+    <div class="agent-arrow">
+      <svg width="40" height="16" viewBox="0 0 40 16"><line x1="0" y1="8" x2="32" y2="8" stroke="#22c55e" stroke-width="1.5"/><polygon points="30,4 40,8 30,12" fill="#22c55e"/></svg>
+      <div class="arrow-label" style="color:var(--green)">final summary</div>
+    </div>
+    <div class="agent-box" style="border-color:var(--green);background:rgba(34,197,94,.08)">
+      <span class="a-icon">📄</span>
+      <span class="a-label" style="color:var(--green)">Output</span>
+      <span class="a-sub" style="color:var(--green)">Delivered to user</span>
+    </div>
+  </div>
+
+  <div class="callout callout-purple">
+    <strong>🔮 The handoff message is the most important artifact in this system.</strong> It's the structured JSON that the Research Agent passes to the Writer Agent — containing key findings, source summaries, confidence levels, and gaps. It determines everything the Writer Agent can and cannot say. In this lab you will see exactly what it looks like — and why its structure matters.
+  </div>
+
+  <div style="margin-top:24px"><button class="btn btn-red" onclick="nav('arch')">Next: Design the Architecture →</button></div>
+</div>
+</div>
+
+<!-- ══════════════ ARCHITECTURE ══════════════ -->
+<div class="section" id="s-arch">
+<div class="wrap">
+  <span class="eyebrow">Section 01 · Lab Activity</span>
+  <h2>Architecture <span class="red">Assignment</span></h2>
+  <p class="lead">12 responsibilities and capabilities. Each belongs to exactly one role: the Research Agent, the Writer Agent, or the Orchestrator. Drag each to the correct zone — one wrong placement reveals a design flaw.</p>
+
+  <div class="callout callout-tip" style="margin-bottom:20px">
+    <strong>💡 Guiding principle:</strong> The Research Agent never writes for humans. The Writer Agent never decides what to look up. The Orchestrator never does cognitive work itself — it only routes, validates, and controls flow.
+  </div>
+
+  <div class="drag-pool"><div class="pool-label">Responsibilities &amp; capabilities — drag to correct agent role</div><div class="drag-chips" id="archPool"></div></div>
+  <div id="archZones"></div>
+  <details style="margin-bottom:14px"><summary style="font-size:.82rem;color:var(--gray-dk);cursor:pointer">On mobile? Tap to assign</summary>
+    <div id="archMob" style="margin-top:8px;display:flex;flex-direction:column;gap:8px"></div></details>
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <button class="btn btn-red" id="archCheckBtn" onclick="checkArch()" disabled>Check Architecture</button>
+    <button class="btn btn-ghost" id="archNextBtn" onclick="markDone('arch');nav('flow')" style="display:none">Next: Message Flow →</button>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════ MESSAGE FLOW ══════════════ -->
+<div class="section" id="s-flow">
+<div class="wrap">
+  <span class="eyebrow">Section 02 · Lab Activity</span>
+  <h2>Message Flow <span class="red">Sequencer</span></h2>
+  <p class="lead">A two-agent pipeline has 8 distinct steps from user request to final output. Drag them into the correct execution order — pay close attention to when the handoff message gets created, validated, and consumed.</p>
+
+  <div class="callout callout-tip" style="margin-bottom:20px">
+    <strong>💡 Key insight:</strong> The Orchestrator appears <em>twice</em> in the pipeline — once to dispatch the Research Agent, and once to validate the handoff before passing it to the Writer Agent. That validation step is often skipped in naive implementations — and is where most real-world failures occur.
+  </div>
+
+  <div class="seq-list" id="seqList"></div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <button class="btn btn-red" id="seqCheckBtn" onclick="checkSeq()">Check Sequence</button>
+    <button class="btn btn-ghost" id="seqNextBtn" onclick="markDone('flow');nav('sim')" style="display:none">Next: Live Simulation →</button>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════ SIMULATION ══════════════ -->
+<div class="section" id="s-sim">
+<div class="wrap">
+  <span class="eyebrow">Section 03 · Live AI Demo</span>
+  <h2>Watch Two Agents <span class="red">Collaborate</span></h2>
+  <p class="lead">This is real. Pick a topic, hit Run — and watch an actual Research Agent and Writer Agent exchange a structured handoff message and produce a summary. Both agents are powered by Claude.</p>
+
+  <div class="callout callout-purple" style="margin-bottom:24px">
+    <strong>🔮 What makes this multi-agent:</strong> Two separate API calls with different system prompts and separate context windows. The Research Agent's output is extracted and formatted into a structured JSON handoff before it's injected into the Writer Agent's context. The Writer Agent never sees the Research Agent's internal reasoning — only the structured findings.
+  </div>
+
+  <span class="eyebrow">Choose a Topic</span>
+  <div class="sim-topic-grid" id="topicGrid"></div>
+
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px;flex-wrap:wrap">
+    <span style="font-size:.82rem;color:var(--gray-dk);font-weight:600">Or type your own:</span>
+    <input class="custom-input" id="customTopic" placeholder="e.g. the history of jazz, how mRNA vaccines work…" style="flex:1"/>
+  </div>
+
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px">
+    <button class="btn btn-red" id="runSimBtn" onclick="runSimulation()">▶ Run Two-Agent Pipeline</button>
+    <button class="btn btn-ghost" id="resetSimBtn" onclick="resetSim()" style="display:none">Reset</button>
+  </div>
+
+  <!-- Stage 1: Research Agent -->
+  <div class="sim-stage" id="stageResearch" style="display:none">
+    <div class="stage-head" style="background:rgba(20,184,166,.1);border:1px solid rgba(20,184,166,.2);border-radius:var(--r-lg) var(--r-lg) 0 0">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:1rem">🔭</span>
+        <div>
+          <div class="stage-title" style="color:var(--teal)">Agent 1 — Research Agent</div>
+          <div style="font-size:.68rem;color:var(--gray-dk);font-weight:600;margin-top:1px">System: "You are a Research Agent. Gather key facts, structure findings, identify gaps."</div>
+        </div>
+      </div>
+      <div class="stage-status status-idle" id="researchStatus">IDLE</div>
+    </div>
+    <div class="stage-body" id="researchBody" style="min-height:120px">
+      <span style="color:var(--gray-dk);font-style:italic">Waiting to start…</span>
+    </div>
+  </div>
+
+  <!-- Handoff Arrow -->
+  <div class="handoff-arrow" id="handoffArrow" style="display:none">
+    <span class="handoff-icon">📦</span>
+    <div>
+      <div class="handoff-label" id="handoffLabel">Handoff message — structured JSON from Research Agent to Writer Agent</div>
+      <div style="font-size:.7rem;color:var(--gray-dk);margin-top:2px">Orchestrator validates this before passing downstream</div>
+    </div>
+    <span style="color:var(--gray-dk);font-size:.8rem">↓</span>
+  </div>
+
+  <!-- Handoff JSON display -->
+  <div id="handoffDisplay" style="display:none;margin-bottom:12px">
+    <div style="background:var(--black3);border:1px solid var(--purple);border-radius:var(--r-lg);padding:16px 18px">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:10px">📦 Handoff Message (inter-agent structured data)</div>
+      <pre id="handoffJSON" style="font-family:'JetBrains Mono',monospace;font-size:.76rem;color:#d8b4fe;white-space:pre-wrap;word-break:break-word;line-height:1.7"></pre>
+    </div>
+  </div>
+
+  <!-- Stage 2: Writer Agent -->
+  <div class="sim-stage" id="stageWriter" style="display:none">
+    <div class="stage-head" style="background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.2);border-radius:var(--r-lg) var(--r-lg) 0 0">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:1rem">✍️</span>
+        <div>
+          <div class="stage-title" style="color:var(--purple)">Agent 2 — Writer Agent</div>
+          <div style="font-size:.68rem;color:var(--gray-dk);font-weight:600;margin-top:1px">System: "You are a Writer Agent. Receive structured research findings and produce a polished summary."</div>
+        </div>
+      </div>
+      <div class="stage-status status-idle" id="writerStatus">IDLE</div>
+    </div>
+    <div class="stage-body" id="writerBody" style="min-height:160px">
+      <span style="color:var(--gray-dk);font-style:italic">Waiting for Research Agent handoff…</span>
+    </div>
+  </div>
+
+  <!-- Post-sim actions -->
+  <div id="simComplete" style="display:none;margin-top:16px">
+    <div class="callout callout-success" style="margin-bottom:16px">
+      <strong>✓ Simulation complete.</strong> You just watched two AI agents collaborate — a Research Agent gathering structured findings, a structured handoff message being passed, and a Writer Agent synthesizing a polished summary. The next section asks you to inspect the output closely.
+    </div>
+    <button class="btn btn-red" onclick="markDone('sim');nav('inspect')">Inspect the Output →</button>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════ INSPECT ══════════════ -->
+<div class="section" id="s-inspect">
+<div class="wrap">
+  <span class="eyebrow">Section 04 · Analysis</span>
+  <h2>Inspect the <span class="red">Writer's Output</span></h2>
+  <p class="lead">Not everything in the final summary comes from the research. Some parts are synthesis. Some are the Writer Agent's own inferences. Some may be things the Research Agent never found. Understanding the difference is critical for knowing what you can and can't trust.</p>
+
+  <div class="legend-row">
+    <div class="legend-item"><div class="legend-swatch" style="background:rgba(59,130,246,.3);border-bottom:2px solid var(--blue)"></div><span style="color:#bfdbfe">Directly from Research Findings</span></div>
+    <div class="legend-item"><div class="legend-swatch" style="background:rgba(168,85,247,.3);border-bottom:2px solid var(--purple)"></div><span style="color:#e9d5ff">Writer's Synthesis / Framing</span></div>
+    <div class="legend-item"><div class="legend-swatch" style="background:rgba(245,197,24,.2);border-bottom:2px solid var(--yellow)"></div><span style="color:#fde68a">Inference / Interpretation</span></div>
+    <div class="legend-item"><div class="legend-swatch" style="background:rgba(232,51,58,.2);border-bottom:2px solid var(--GA-red)"></div><span style="color:#fca5a5">Possible Gap / Needs Verification</span></div>
+  </div>
+
+  <div class="card" style="margin-bottom:20px">
+    <div style="font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gray-dk);margin-bottom:12px">Annotated Writer Agent Output — Hover highlights to learn what type of content each is</div>
+    <div class="annotated-text" id="annotatedOutput">
+      <span style="color:var(--gray-dk);font-style:italic">Run the simulation first to generate output for annotation.</span>
+    </div>
+  </div>
+
+  <div class="callout callout-warn" id="inspectInsight" style="display:none"></div>
+
+  <div style="margin-top:20px">
+    <button class="btn btn-ghost" id="inspectBackBtn" onclick="nav('sim')" style="margin-right:8px">← Back to Simulation</button>
+    <button class="btn btn-red" id="inspectNextBtn" onclick="markDone('inspect');nav('failure')">Next: Failure Modes →</button>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════ FAILURE MODES ══════════════ -->
+<div class="section" id="s-failure">
+<div class="wrap">
+  <span class="eyebrow">Section 05 · Critical Analysis</span>
+  <h2>Multi-Agent <span class="red">Failure Modes</span></h2>
+  <p class="lead">Multi-agent systems fail in ways that single-agent systems don't. Classify each failure: which agent caused it, and which stage of the pipeline broke?</p>
+
+  <div class="callout callout-tip" style="margin-bottom:20px">
+    <strong>💡 Three failure categories:</strong>
+    <span style="color:var(--teal)">Research Agent</span> (produced bad or incomplete findings) ·
+    <span style="color:var(--purple)">Writer Agent</span> (misused or exceeded the research) ·
+    <span style="color:var(--blue)">Orchestrator / Handoff</span> (the pipeline itself broke)
+  </div>
+
+  <div style="background:var(--black2);border:1px solid var(--line);border-radius:var(--r-lg);padding:8px 20px;margin-bottom:20px" id="failureList"></div>
+
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+    <span id="failureScore" style="font-size:.88rem;color:var(--gray)">Classified: <span id="failureCount" style="color:var(--GA-red);font-weight:700">0</span> / 6</span>
+    <button class="btn btn-ghost" id="failureNextBtn" onclick="markDone('failure');nav('quiz')" style="display:none">Go to Knowledge Check →</button>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════ QUIZ ══════════════ -->
+<div class="section" id="s-quiz">
+<div class="wrap">
+  <span class="eyebrow">Knowledge Check</span>
+  <h2>7 <span class="red">Questions</span></h2>
+  <p class="lead">Questions on multi-agent architecture, message flow, and the failure modes you just classified. 70% to pass.</p>
+  <div id="quizActive">
+    <div class="qz-meta"><span id="qMeta">Question 1 of 7</span><span id="qScoreTxt">Score: 0 / 0</span></div>
+    <div class="prog-bar"><div class="prog-fill" id="qProg" style="width:0%"></div></div>
+    <div class="card card-rb">
+      <div class="quiz-q" id="quizQ"></div>
+      <div class="q-opts" id="quizOpts"></div>
+      <div class="fb-box" id="quizFB"></div>
+      <button class="btn btn-red" id="qNextBtn" onclick="nextQ()" style="display:none">Continue →</button>
+    </div>
+  </div>
+  <div id="quizDone" style="display:none">
+    <div class="card card-rb">
+      <h3 style="font-size:1.2rem;margin-bottom:8px">Quiz Complete <span id="qBadge"></span></h3>
+      <p style="font-size:.95rem;color:var(--gray-lt);margin-bottom:20px;line-height:1.7" id="qMsg"></p>
+      <button class="btn btn-green" onclick="markDone('quiz');buildResults();nav('results')">See Your Results →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════ RESULTS ══════════════ -->
+<div class="section" id="s-results">
+<div class="wrap">
+  <span class="eyebrow">Lab Debrief</span>
+  <h2>Lab <span class="red">Complete</span></h2>
+  <div id="resultsBody"></div>
+</div>
+</div>
+
+<script>
+// ─── NAV ──────────────────────────────────────────────────────────────────────
+const ALL_SECS=['intro','why','arch','flow','sim','inspect','failure','quiz','results'];
+let completed=new Set(), sectionScores={};
+function nav(id){
+  ALL_SECS.forEach(s=>{
+    document.getElementById('s-'+s).classList.remove('active');
+    const t=document.getElementById('t-'+s);if(t)t.classList.remove('active');
+  });
+  document.getElementById('s-'+id).classList.add('active');
+  const t=document.getElementById('t-'+id);if(t)t.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='arch'&&!archBuilt)buildArch();
+  if(id==='flow'&&!seqBuilt)buildSeqList();
+  if(id==='sim'&&!simBuilt)buildSim();
+  if(id==='inspect')buildInspect();
+  if(id==='failure'&&!failureBuilt)buildFailure();
+  if(id==='quiz'&&!quizStarted)initQuiz();
+}
+function markDone(key){
+  completed.add(key);
+  document.getElementById('progressChip').textContent=completed.size+' / 5';
+  const d=document.getElementById('dot-'+key),l=document.getElementById('lbl-'+key);
+  if(d){d.className='rm-dot done';d.textContent='✓';}
+  if(l)l.className='rm-label done';
+}
+
+// ─── ARCHITECTURE DRAG/DROP ───────────────────────────────────────────────────
+const ARCH_ZONES=[
+  {id:'research',label:'Research Agent',  icon:'🔭',color:'#14b8a6',bg:'rgba(20,184,166,.14)',  desc:'Gathers, structures, and annotates raw findings'},
+  {id:'writer',  label:'Writer Agent',    icon:'✍️',color:'#a855f7',bg:'rgba(168,85,247,.14)', desc:'Synthesizes findings into readable human output'},
+  {id:'orch',    label:'Orchestrator',    icon:'🔬',color:'#3b82f6',bg:'rgba(59,130,246,.14)', desc:'Routes, validates, controls flow — does no cognitive work itself'},
+];
+const ARCH_ITEMS=[
+  {id:'a1',  text:'Search the web and retrieve source pages',                            answer:'research'},
+  {id:'a2',  text:'Decide the audience tone: formal vs casual',                          answer:'writer'},
+  {id:'a3',  text:'Validate that the handoff JSON contains required fields before forwarding', answer:'orch'},
+  {id:'a4',  text:'Extract key claims and tag each with a confidence level',             answer:'research'},
+  {id:'a5',  text:'Write the opening hook sentence of the summary',                      answer:'writer'},
+  {id:'a6',  text:'Enforce the output length constraint from the user\'s request',       answer:'orch'},
+  {id:'a7',  text:'Identify gaps: "I found no data on X — flagged for Writer to note"',  answer:'research'},
+  {id:'a8',  text:'Decide which 3 of 8 findings are most important to lead with',        answer:'writer'},
+  {id:'a9',  text:'Track which agent is currently running and handle timeouts',          answer:'orch'},
+  {id:'a10', text:'Summarize conflicting sources: "Source A says X, Source B says Y"',   answer:'research'},
+  {id:'a11', text:'Rewrite a sentence for readability and flow',                         answer:'writer'},
+  {id:'a12', text:'Return the finished summary to the user interface',                   answer:'orch'},
+].sort(()=>Math.random()-.5);
+
+let archBuilt=false, archP={}, archChecked=false;
+function buildArch(){
+  archBuilt=true;
+  const pool=document.getElementById('archPool');
+  const mob=document.getElementById('archMob');
+  ARCH_ITEMS.forEach(item=>{
+    pool.appendChild(mkChip(item));
+    const row=document.createElement('div');
+    row.style.cssText='padding:10px;background:var(--black2);border-radius:4px;border:1px solid var(--line)';
+    const lbl=document.createElement('div');
+    lbl.style.cssText='font-size:.86rem;color:var(--gray-lt);margin-bottom:6px;line-height:1.4';
+    lbl.textContent=item.text;
+    const btns=document.createElement('div');btns.style.cssText='display:flex;gap:4px;flex-wrap:wrap';
+    ARCH_ZONES.forEach(z=>{
+      const b=document.createElement('button');
+      b.style.cssText=`padding:3px 9px;border-radius:3px;border:1.5px solid ${z.color};background:transparent;font-size:.72rem;cursor:pointer;color:${z.color};font-weight:700`;
+      b.textContent=z.label;
+      b.addEventListener('click',()=>{
+        archP[item.id]=z.id;
+        const chip=document.getElementById('ac-'+item.id);if(chip)chip.parentNode.removeChild(chip);
+        const body=document.getElementById('adz-'+z.id);
+        if(body){const e=body.querySelector('span[style*="italic"]');if(e)e.remove();body.appendChild(mkChip(item));}
+        updateArchBtn();
+      });
+      btns.appendChild(b);
+    });
+    row.appendChild(lbl);row.appendChild(btns);mob.appendChild(row);
+  });
+  const container=document.getElementById('archZones');
+  ARCH_ZONES.forEach(z=>{
+    const zone=document.createElement('div');zone.className='dz';zone.style.border=`1px solid ${z.color}30`;
+    const head=document.createElement('div');head.className='dz-head';head.style.background=z.bg;
+    head.innerHTML=`<span style="font-size:1.1rem">${z.icon}</span><div><div class="dz-title" style="color:${z.color}">${z.label}</div><div class="dz-sub">${z.desc}</div></div>`;
+    const body=document.createElement('div');body.className='dz-body';body.id='adz-'+z.id;
+    body.innerHTML='<span style="font-size:.78rem;color:var(--gray-dk);font-style:italic;width:100%;text-align:center;padding:10px 0">Drop here</span>';
+    body.addEventListener('dragover',e=>{e.preventDefault();body.classList.add('over');});
+    body.addEventListener('dragleave',()=>body.classList.remove('over'));
+    body.addEventListener('drop',e=>{
+      e.preventDefault();body.classList.remove('over');if(archChecked)return;
+      const id=e.dataTransfer.getData('text/plain');archP[id]=z.id;
+      const chip=document.getElementById('ac-'+id);if(chip)chip.parentNode.removeChild(chip);
+      const emp=body.querySelector('span[style*="italic"]');if(emp)emp.remove();
+      body.appendChild(mkChip(ARCH_ITEMS.find(x=>x.id===id)));updateArchBtn();
+    });
+    zone.appendChild(head);zone.appendChild(body);container.appendChild(zone);
+  });
+}
+function mkChip(item){
+  const c=document.createElement('div');c.className='drag-chip';c.id='ac-'+item.id;
+  c.textContent=item.text.length>56?item.text.slice(0,53)+'…':item.text;c.title=item.text;
+  c.setAttribute('draggable','true');
+  c.addEventListener('dragstart',e=>e.dataTransfer.setData('text/plain',item.id));
+  return c;
+}
+function updateArchBtn(){document.getElementById('archCheckBtn').disabled=!ARCH_ITEMS.every(i=>archP[i.id]);}
+function checkArch(){
+  archChecked=true;let correct=0;
+  ARCH_ITEMS.forEach(item=>{
+    const chip=document.getElementById('ac-'+item.id);if(!chip)return;
+    if(archP[item.id]===item.answer){chip.classList.add('correct');correct++;}
+    else chip.classList.add('wrong');
+  });
+  sectionScores.arch={earned:correct,possible:ARCH_ITEMS.length};
+  document.getElementById('archCheckBtn').style.display='none';
+  document.getElementById('archNextBtn').style.display='inline-flex';
+}
+
+// ─── SEQUENCER ────────────────────────────────────────────────────────────────
+const SEQ_CORRECT=[
+  {icon:'👤',agent:'USER',agentColor:'#e8333a',text:'User submits a topic request with format requirements (length, audience, tone)'},
+  {icon:'🔬',agent:'ORCH',agentColor:'#3b82f6',text:'Orchestrator validates the request and dispatches the Research Agent with a structured task definition'},
+  {icon:'🔭',agent:'RESEARCH',agentColor:'#14b8a6',text:'Research Agent activates: gathers sources, extracts key claims, tags confidence levels, and notes gaps'},
+  {icon:'📦',agent:'RESEARCH',agentColor:'#14b8a6',text:'Research Agent produces a structured handoff message (JSON) containing: findings, sources, confidence scores, and identified gaps'},
+  {icon:'🔬',agent:'ORCH',agentColor:'#3b82f6',text:'Orchestrator receives and validates the handoff: checks required fields, confidence thresholds, and minimum finding count'},
+  {icon:'✍️',agent:'WRITER',agentColor:'#a855f7',text:'Writer Agent activates: receives handoff JSON as its only knowledge source and generates the summary'},
+  {icon:'📄',agent:'WRITER',agentColor:'#a855f7',text:'Writer Agent returns the finished summary — tagged with which findings it used and any gaps it flagged to the reader'},
+  {icon:'🔬',agent:'ORCH',agentColor:'#3b82f6',text:'Orchestrator performs a final format check (length, required sections) and delivers to the user'},
+];
+let seqBuilt=false,seqChecked=false;
+let seqOrder=[...SEQ_CORRECT].sort(()=>Math.random()-.5);
+function buildSeqList(){
+  seqBuilt=true;
+  const list=document.getElementById('seqList');
+  seqOrder.forEach((step,i)=>{
+    const item=document.createElement('div');item.className='seq-item';item.dataset.idx=i;item.setAttribute('draggable','true');
+    item.innerHTML=`<span class="seq-handle">⠿</span><div class="seq-pos">${i+1}</div><span style="font-size:1rem;flex-shrink:0">${step.icon}</span><span class="seq-agent" style="background:${step.agentColor}22;color:${step.agentColor};border:1px solid ${step.agentColor}44">${step.agent}</span><div class="seq-text">${step.text}</div>`;
+    item.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',i);item.classList.add('dragging');});
+    item.addEventListener('dragend',()=>{item.classList.remove('dragging');document.querySelectorAll('.seq-item').forEach(x=>x.classList.remove('drag-over'));});
+    item.addEventListener('dragover',e=>{e.preventDefault();if(!seqChecked)item.classList.add('drag-over');});
+    item.addEventListener('dragleave',()=>item.classList.remove('drag-over'));
+    item.addEventListener('drop',e=>{
+      e.preventDefault();item.classList.remove('drag-over');if(seqChecked)return;
+      const from=parseInt(e.dataTransfer.getData('text/plain'));
+      const to=parseInt(item.dataset.idx);
+      if(from===to)return;
+      [seqOrder[from],seqOrder[to]]=[seqOrder[to],seqOrder[from]];
+      rebuildSeq();
+    });
+    list.appendChild(item);
+  });
+}
+function rebuildSeq(){const l=document.getElementById('seqList');l.innerHTML='';seqBuilt=false;buildSeqList();}
+function checkSeq(){
+  seqChecked=true;let correct=0;
+  document.querySelectorAll('.seq-item').forEach((item,i)=>{
+    const idx=parseInt(item.dataset.idx);
+    if(seqOrder[idx].text===SEQ_CORRECT[i].text){item.classList.add('correct');correct++;}
+    else item.classList.add('wrong');
+    item.querySelector('.seq-pos').textContent=i+1;
+  });
+  sectionScores.flow={earned:correct,possible:SEQ_CORRECT.length};
+  document.getElementById('seqCheckBtn').style.display='none';
+  document.getElementById('seqNextBtn').style.display='inline-flex';
+}
+
+// ─── SIMULATION ───────────────────────────────────────────────────────────────
+const TOPICS=[
+  {icon:'🧬',name:'How mRNA vaccines work'},
+  {icon:'🤖',name:'How large language models are trained'},
+  {icon:'🌊',name:'Ocean plastic pollution'},
+  {icon:'🧠',name:'The science of sleep and memory'},
+  {icon:'🚀',name:'Commercial spaceflight today'},
+  {icon:'🎵',name:'How music affects the brain'},
+  {icon:'🌱',name:'Vertical farming and food security'},
+  {icon:'🔐',name:'How end-to-end encryption works'},
+];
+let simBuilt=false, selectedTopic='', simRunning=false, simDone=false;
+let lastResearchOutput='', lastWriterOutput='', lastHandoffJSON='';
+
+function buildSim(){
+  simBuilt=true;
+  const grid=document.getElementById('topicGrid');
+  TOPICS.forEach(t=>{
+    const btn=document.createElement('button');btn.className='topic-btn';
+    btn.innerHTML=`<span class="topic-icon">${t.icon}</span><span class="topic-name">${t.name}</span>`;
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.topic-btn').forEach(b=>b.classList.remove('selected'));
+      btn.classList.add('selected');selectedTopic=t.name;
+      document.getElementById('customTopic').value='';
+    });
+    grid.appendChild(btn);
+  });
+}
+
+async function runSimulation(){
+  const custom=document.getElementById('customTopic').value.trim();
+  const topic=custom||selectedTopic;
+  if(!topic){alert('Please select a topic or type your own.');return;}
+  if(simRunning)return;
+  simRunning=true;
+  selectedTopic=topic;
+
+  // Reset and show stages
+  document.getElementById('stageResearch').style.display='block';
+  document.getElementById('handoffArrow').style.display='none';
+  document.getElementById('handoffDisplay').style.display='none';
+  document.getElementById('stageWriter').style.display='none';
+  document.getElementById('simComplete').style.display='none';
+  document.getElementById('runSimBtn').disabled=true;
+  document.getElementById('resetSimBtn').style.display='inline-flex';
+
+  // ── STAGE 1: Research Agent ──
+  setStageStatus('research','RUNNING');
+  setStageBody('research','<span style="color:var(--teal)">🔭 Research Agent activating…</span><span class="typing-cursor"></span>');
+
+  const researchPrompt=`You are a Research Agent in a two-agent pipeline. Your job is to research a topic and return structured findings.
+
+Topic to research: "${topic}"
+
+Return ONLY valid JSON in this exact format (no markdown, no backticks, just raw JSON):
+{
+  "topic": "the topic string",
+  "key_findings": [
+    {"claim": "a specific factual claim", "confidence": "high|medium|low", "importance": "high|medium|low"},
+    {"claim": "another claim", "confidence": "high|medium|low", "importance": "high|medium|low"},
+    {"claim": "...", "confidence": "...", "importance": "..."},
+    {"claim": "...", "confidence": "...", "importance": "..."},
+    {"claim": "...", "confidence": "...", "importance": "..."}
+  ],
+  "context": "2-3 sentence background that the Writer Agent needs",
+  "gaps": ["a knowledge gap or caveat", "another gap if any"],
+  "suggested_angle": "a brief note on the most interesting framing for a general audience",
+  "word_count_recommendation": 200
+}
+
+Return exactly 5 key_findings. Be specific and accurate. Only return the JSON object.`;
+
+  try {
+    const res1=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        messages:[{role:'user',content:researchPrompt}]
+      })
+    });
+    const d1=await res1.json();
+    const rawText=d1.content.filter(c=>c.type==='text').map(c=>c.text).join('');
+    lastResearchOutput=rawText;
+
+    // Parse JSON
+    let findings;
+    try{
+      // Strip any stray markdown if present
+      const clean=rawText.replace(/```json|```/g,'').trim();
+      findings=JSON.parse(clean);
+    }catch(e){
+      // Fallback: try to extract JSON
+      const match=rawText.match(/\{[\s\S]*\}/);
+      if(match)findings=JSON.parse(match[0]);
+      else throw new Error('Could not parse research JSON');
+    }
+    lastHandoffJSON=JSON.stringify(findings,null,2);
+
+    // Show research summary
+    const findingSummary=findings.key_findings.map((f,i)=>
+      `<div style="display:flex;gap:8px;margin-bottom:5px">
+        <span style="color:${f.confidence==='high'?'var(--green)':f.confidence==='medium'?'var(--yellow)':'var(--GA-red)'};font-size:.75rem;font-weight:700;flex-shrink:0;padding-top:1px">${f.confidence.toUpperCase()}</span>
+        <span>${f.claim}</span>
+      </div>`
+    ).join('');
+    setStageBody('research',`
+      <div style="font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);margin-bottom:10px">Research complete — ${findings.key_findings.length} findings</div>
+      ${findingSummary}
+      <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:.82rem;color:var(--gray-dk)">
+        Context: ${findings.context}<br/>
+        ${findings.gaps&&findings.gaps.length?`<span style="color:var(--yellow)">⚠ Gaps noted: ${findings.gaps.join(' · ')}</span>`:''}
+      </div>`);
+    setStageStatus('research','DONE');
+
+    // Show handoff
+    await sleep(400);
+    document.getElementById('handoffArrow').style.display='flex';
+    document.getElementById('handoffArrow').classList.add('active');
+    document.getElementById('handoffLabel').textContent=`Handoff: ${findings.key_findings.length} findings on "${findings.topic}" passed to Writer Agent`;
+    await sleep(600);
+    document.getElementById('handoffDisplay').style.display='block';
+    document.getElementById('handoffJSON').textContent=lastHandoffJSON;
+
+    // ── STAGE 2: Writer Agent ──
+    await sleep(500);
+    document.getElementById('stageWriter').style.display='block';
+    setStageStatus('writer','RUNNING');
+    setStageBody('writer','<span style="color:var(--purple)">✍️ Writer Agent reading handoff…</span><span class="typing-cursor"></span>');
+
+    const writerPrompt=`You are a Writer Agent in a two-agent pipeline. You receive structured research findings as JSON and produce a polished, engaging summary for a general audience.
+
+Here are the research findings from the Research Agent:
+
+${lastHandoffJSON}
+
+Write a clear, engaging summary of approximately ${findings.word_count_recommendation||200} words. Use the suggested angle: "${findings.suggested_angle}". 
+
+Format your response as flowing prose with a compelling opening sentence. If the research noted any gaps, include a brief honest note at the end acknowledging what is not fully known. Do not make claims beyond what the research findings support.
+
+Write only the summary — no preamble, no "here is the summary", just the content.`;
+
+    const res2=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:600,
+        messages:[{role:'user',content:writerPrompt}]
+      })
+    });
+    const d2=await res2.json();
+    const writerText=d2.content.filter(c=>c.type==='text').map(c=>c.text).join('');
+    lastWriterOutput=writerText;
+
+    // Typewriter effect
+    setStageBody('writer','');
+    await typewrite('writerBody',writerText);
+    setStageStatus('writer','DONE');
+    simDone=true;
+
+    await sleep(400);
+    document.getElementById('simComplete').style.display='block';
+
+  } catch(err){
+    setStageStatus('research','IDLE');
+    setStageBody('research',`<span style="color:var(--GA-red)">Error: ${err.message}. Please try again.</span>`);
+    document.getElementById('runSimBtn').disabled=false;
+  }
+  simRunning=false;
+}
+
+function setStageStatus(stage,status){
+  const el=document.getElementById(stage+'Status');
+  el.textContent=status;
+  el.className='stage-status '+(status==='RUNNING'?'status-running':status==='DONE'?'status-done':status==='WAITING'?'status-waiting':'status-idle');
+}
+function setStageBody(stage,html){document.getElementById(stage+'Body').innerHTML=html;}
+
+async function typewrite(elId,text){
+  const el=document.getElementById(elId);
+  el.innerHTML='';
+  const cursor=document.createElement('span');cursor.className='typing-cursor';
+  el.appendChild(cursor);
+  const words=text.split(' ');
+  let built='';
+  for(let i=0;i<words.length;i++){
+    built+=(i>0?' ':'')+words[i];
+    el.innerHTML=built+'<span class="typing-cursor"></span>';
+    if(i%4===0)await sleep(20);
+  }
+  el.innerHTML=built;
+}
+
+function resetSim(){
+  document.getElementById('stageResearch').style.display='none';
+  document.getElementById('handoffArrow').style.display='none';
+  document.getElementById('handoffDisplay').style.display='none';
+  document.getElementById('stageWriter').style.display='none';
+  document.getElementById('simComplete').style.display='none';
+  document.getElementById('runSimBtn').disabled=false;
+  document.getElementById('resetSimBtn').style.display='none';
+  document.querySelectorAll('.topic-btn').forEach(b=>b.classList.remove('selected'));
+  selectedTopic='';simRunning=false;
+}
+
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+
+// ─── INSPECT ──────────────────────────────────────────────────────────────────
+function buildInspect(){
+  const el=document.getElementById('annotatedOutput');
+  if(!lastWriterOutput){
+    el.innerHTML='<span style="color:var(--gray-dk);font-style:italic">Run the simulation first — the output will appear here with interactive annotations.</span>';
+    document.getElementById('inspectInsight').style.display='none';
+    return;
+  }
+
+  // Parse handoff to understand what's grounded
+  let findings=[];
+  try{const j=JSON.parse(lastHandoffJSON);findings=j.key_findings||[];}catch(e){}
+
+  // Split output into sentences and annotate each
+  const sentences=lastWriterOutput.match(/[^.!?]+[.!?]+/g)||[lastWriterOutput];
+  let annotated='';
+  sentences.forEach((s,i)=>{
+    const trimmed=s.trim();
+    if(!trimmed)return;
+    // Simple heuristic annotation
+    const isHighConf=findings.some(f=>f.confidence==='high'&&similarity(trimmed,f.claim)>0.25);
+    const isMedConf=findings.some(f=>f.confidence==='medium'&&similarity(trimmed,f.claim)>0.2);
+    const isGap=trimmed.toLowerCase().includes('not fully')
+              ||trimmed.toLowerCase().includes('unclear')
+              ||trimmed.toLowerCase().includes('gap')
+              ||trimmed.toLowerCase().includes('unknown')
+              ||trimmed.toLowerCase().includes('may')&&i>sentences.length-3;
+    const isOpening=i===0;
+    const isSynthesis=i>0&&i<3&&!isHighConf&&!isMedConf;
+    const isInference=i>=Math.floor(sentences.length/2)&&!isHighConf&&!isGap;
+
+    let cls='', tip='';
+    if(isGap){cls='ann ann-gap';tip='⚠ Writer acknowledged a research gap';}
+    else if(isHighConf){cls='ann ann-research';tip='📊 Directly grounded in high-confidence research finding';}
+    else if(isMedConf||isOpening){cls='ann ann-research';tip='📊 Grounded in research findings';}
+    else if(isSynthesis){cls='ann ann-synthesis';tip='✍️ Writer\'s synthesis — framing from findings';}
+    else if(isInference){cls='ann ann-opinion';tip='💡 Writer\'s inference or interpretation';}
+
+    if(cls){
+      annotated+=` <span class="${cls}">${trimmed}<span class="ann-tooltip">${tip}</span></span>`;
+    } else {
+      annotated+=` <span class="ann ann-synthesis">${trimmed}<span class="ann-tooltip">✍️ Writer synthesis</span></span>`;
+    }
+  });
+  el.innerHTML=annotated||lastWriterOutput;
+
+  document.getElementById('inspectInsight').style.display='block';
+  document.getElementById('inspectInsight').innerHTML=`<strong>⚠ What the annotations reveal:</strong> The blue passages are directly grounded in the Research Agent's findings. The purple passages are the Writer Agent's synthesis — combining findings into a narrative. The yellow passages are inferences or interpretations that go slightly beyond what was found. A well-designed two-agent system minimizes yellow — the Writer should stay close to the handoff. If you see a lot of yellow, it suggests the handoff didn't contain enough structured data, forcing the Writer to invent connections.`;
+}
+// Simple word-overlap similarity
+function similarity(a,b){
+  const wa=new Set(a.toLowerCase().split(/\W+/).filter(x=>x.length>4));
+  const wb=new Set(b.toLowerCase().split(/\W+/).filter(x=>x.length>4));
+  let overlap=0;wa.forEach(w=>{if(wb.has(w))overlap++;});
+  return overlap/Math.max(wa.size||1,wb.size||1);
+}
+
+// ─── FAILURE MODES ────────────────────────────────────────────────────────────
+let failureBuilt=false, failureAnswers={};
+const FAILURES=[
+  {id:'f1',q:'The Writer Agent\'s summary contains a confident claim that was never in the Research Agent\'s findings — it appears to have been invented.',
+   opts:['Research Agent','Writer Agent','Orchestrator / Handoff'],
+   correct:1,
+   fb:'Writer Agent failure — hallucination beyond the handoff. The Writer Agent should only write what the handoff contains. This is fixed by adding an explicit constraint to the Writer Agent\'s system prompt: "Only state things that appear in the research findings. If a claim is not in the JSON, do not include it." This is also why the Orchestrator\'s validation step matters — it can check whether the Writer\'s output is traceable to the handoff.'},
+  {id:'f2',q:'The Research Agent returns valid JSON but all 5 findings have confidence: "low". The Writer Agent produces a confidently-worded summary anyway.',
+   opts:['Research Agent','Writer Agent','Orchestrator / Handoff'],
+   correct:2,
+   fb:'Orchestrator / Handoff failure — the Orchestrator should have caught that all findings were low-confidence before passing to the Writer. The validation step should include: if average confidence < threshold → either re-run research with a broader query, or pass a flag to the Writer Agent requiring hedged language throughout. The fix: add a confidence gate to the Orchestrator\'s validation logic.'},
+  {id:'f3',q:'The Research Agent takes 45 seconds to run on a complex topic, timing out the pipeline and returning nothing to the Writer Agent.',
+   opts:['Research Agent','Writer Agent','Orchestrator / Handoff'],
+   correct:0,
+   fb:'Research Agent failure — specifically a latency/timeout failure. The Research Agent needs a hard time limit and a graceful degradation strategy: if it can\'t complete full research in time, it should return partial findings with a "research_incomplete: true" flag rather than failing silently. The Orchestrator should be designed to handle partial handoffs.'},
+  {id:'f4',q:'The Writer Agent produces an excellent summary — but it\'s 800 words when the user asked for 150. The Orchestrator delivered it anyway.',
+   opts:['Research Agent','Writer Agent','Orchestrator / Handoff'],
+   correct:2,
+   fb:'Orchestrator failure — the Orchestrator\'s final format check is supposed to catch length violations before delivery. Either the Orchestrator didn\'t enforce the constraint, or the constraint wasn\'t passed to the Writer Agent in the first place. The fix: include format requirements (max words, required sections) in the task definition that the Orchestrator sends to both agents — and add a final validation step before delivery.'},
+  {id:'f5',q:'The Research Agent correctly identifies a major gap: "No data found on long-term effects." The Writer Agent\'s summary never mentions this limitation.',
+   opts:['Research Agent','Writer Agent','Orchestrator / Handoff'],
+   correct:1,
+   fb:'Writer Agent failure — it was given the gaps list in the handoff JSON and chose not to use it. The Writer Agent\'s system prompt must explicitly instruct: "If the research findings include gaps, acknowledge them in the final summary." Omitting a known limitation is as misleading as inventing a claim. This is a design failure in the Writer Agent\'s instructions, not in the data it received.'},
+  {id:'f6',q:'The Research Agent\'s JSON is technically valid but the "key_findings" field contains a list of strings instead of the expected list of objects with claim/confidence/importance fields. The Writer Agent crashes trying to parse it.',
+   opts:['Research Agent','Writer Agent','Orchestrator / Handoff'],
+   correct:2,
+   fb:'Orchestrator / Handoff failure — schema validation. The Orchestrator must validate not just that the JSON field exists, but that its structure matches the expected schema before passing it downstream. This is exactly why the Orchestrator\'s validation step is a first-class pipeline stage — not an optional nicety. Use JSON Schema validation (or equivalent) in the Orchestrator to enforce the handoff contract.'},
+];
+function buildFailure(){
+  failureBuilt=true;
+  const el=document.getElementById('failureList');
+  FAILURES.forEach(item=>{
+    const div=document.createElement('div');div.className='fail-item';
+    const optLabels=[
+      {l:'🔭 Research Agent',c:'#14b8a6'},
+      {l:'✍️ Writer Agent',c:'#a855f7'},
+      {l:'🔬 Orchestrator / Handoff',c:'#3b82f6'},
+    ];
+    div.innerHTML=`
+      <div class="fail-q">${item.q}</div>
+      <div class="fail-opts" id="fo-${item.id}">
+        ${optLabels.map((o,i)=>`<button class="fail-opt" id="fob-${item.id}-${i}" style="border-color:${o.c};color:${o.c}" onclick="answerFailure('${item.id}',${i})">${o.l}</button>`).join('')}
+      </div>
+      <div class="fail-fb" id="ffb-${item.id}"></div>`;
+    el.appendChild(div);
+  });
+}
+function answerFailure(id,choice){
+  if(failureAnswers[id]!==undefined)return;
+  failureAnswers[id]=choice;
+  const item=FAILURES.find(x=>x.id===id);
+  const ok=choice===item.correct;
+  for(let i=0;i<3;i++){
+    const b=document.getElementById(`fob-${id}-${i}`);
+    b.classList.add('disabled');
+    if(i===choice)b.classList.add(ok?'selected-correct':'selected-wrong');
+    if(i===item.correct&&!ok)b.classList.add('reveal-correct');
+  }
+  const fb=document.getElementById('ffb-'+id);
+  fb.innerHTML=`<strong style="color:${ok?'var(--green)':'var(--GA-red)'}">${ok?'✓ Correct.':'✗ Not quite.'}</strong> ${item.fb}`;
+  fb.classList.add('show');
+  const answered=Object.keys(failureAnswers).length;
+  document.getElementById('failureCount').textContent=answered;
+  document.getElementById('failureCount').style.color=answered>=6?'var(--green)':'var(--GA-red)';
+  const correct=FAILURES.filter(x=>failureAnswers[x.id]===x.correct).length;
+  sectionScores.failure={earned:correct,possible:6};
+  if(answered>=4)document.getElementById('failureNextBtn').style.display='inline-flex';
+  if(answered>=6)markDone('failure');
+}
+
+// ─── QUIZ ─────────────────────────────────────────────────────────────────────
+const QUESTIONS=[
+  {q:'What is the primary purpose of the structured handoff message in a two-agent research + writer pipeline?',
+   opts:[
+     'To make the system look more complex and impressive',
+     'To give the Writer Agent a clean, validated, structured knowledge source — separating what is known from what is inferred, and preventing the Writer from hallucinating beyond the research',
+     'To reduce the number of API calls needed',
+     'To store the conversation history between agents'
+   ],ans:1,
+   ok:'Correct! The handoff message is the most important artifact in the system — it\'s the boundary between research and synthesis. By structuring it as validated JSON with confidence scores and gaps, you give the Writer Agent clear constraints on what it can and cannot claim.',
+   bad:'Not quite. The handoff message\'s purpose is to create a validated, structured knowledge boundary. It prevents hallucination by giving the Writer Agent exactly what was found — with confidence levels and gaps explicitly noted — rather than having it draw on its own training data.'},
+  {q:'Why should the Orchestrator validate the handoff message BEFORE passing it to the Writer Agent — rather than trusting the Research Agent output?',
+   opts:[
+     'Because the Research Agent can hallucinate, return malformed JSON, miss required fields, or produce all low-confidence findings — validation catches these before they propagate downstream into the summary',
+     'Because validation makes the pipeline faster',
+     'Because the Writer Agent cannot read JSON',
+     'Because the Orchestrator is always smarter than the Research Agent'
+   ],ans:0,
+   ok:'Correct! The validation step is a quality gate. LLMs can produce technically valid JSON that fails the semantic contract — all low-confidence findings, missing gap fields, malformed claim objects. Catching these before the Writer Agent runs prevents downstream failures.',
+   bad:'Not quite. The Research Agent can return valid JSON that still fails the contract: all low-confidence findings, missing required fields, or schema drift. Validation catches these silently-broken handoffs before they cause the Writer to produce misleading output.'},
+  {q:'In the Architecture exercise, which of these belongs ONLY to the Research Agent — not the Writer Agent or Orchestrator?',
+   opts:[
+     'Deciding which font to use in the final output',
+     'Summarizing conflicting sources: "Source A says X, Source B says Y"',
+     'Enforcing the user\'s requested word count',
+     'Writing the opening hook sentence of the summary'
+   ],ans:1,
+   ok:'Correct! Identifying and recording conflicting sources is a research task — it requires examining multiple sources, not synthesizing them into a narrative. The Research Agent notes the conflict; the Writer Agent decides how to handle it in the summary.',
+   bad:'Not quite. Summarizing conflicting sources is squarely a Research Agent task — it requires examining multiple sources and noting disagreement without yet resolving it into a narrative. That\'s the Research Agent\'s job: gather and structure. The Writer Agent synthesizes.'},
+  {q:'A Writer Agent produces a confidently-worded summary even though all 5 research findings had confidence: "low". Which fix addresses this at the right layer?',
+   opts:[
+     'Make the Research Agent try harder to find better sources',
+     'Add a confidence gate in the Orchestrator: if average confidence is below a threshold, either re-run research or flag to the Writer that hedged language is required throughout',
+     'Tell the Writer Agent to never write confidently',
+     'Use a better LLM model'
+   ],ans:1,
+   ok:'Correct! This is an Orchestrator-layer fix. The Orchestrator is responsible for enforcing quality contracts between agents. Adding a confidence gate — that either triggers a research retry or passes a "hedge_language: required" flag to the Writer — is exactly where this logic belongs.',
+   bad:'Not quite. The fix belongs in the Orchestrator\'s validation step. The Orchestrator reads the confidence scores in the handoff and either triggers a research retry (if confidence is too low across the board) or sets a flag that forces the Writer Agent to use appropriately hedged language.'},
+  {q:'You are designing the Orchestrator. The Writer Agent returns a 900-word summary when the user asked for 150 words. What should the Orchestrator do?',
+   opts:[
+     'Deliver it anyway — the user will appreciate the extra detail',
+     'Silently truncate the summary at 150 words',
+     'Either re-invoke the Writer Agent with an explicit length constraint, or truncate with a visible note — and update the Writer Agent\'s task definition to include the constraint next time',
+     'Return an error to the user and shut down the pipeline'
+   ],ans:2,
+   ok:'Correct! The Orchestrator should never silently fail or silently truncate. The options are: re-invoke with explicit constraints (preferred), or truncate with a visible note to the user. The key lesson: format requirements must be included in the Writer Agent\'s task definition — not just in the original user request.',
+   bad:'Not quite. Silent truncation hides the failure. Silent delivery ignores the constraint. The right approach: the Orchestrator either re-invokes the Writer Agent with the explicit word count as a hard constraint in the prompt, or truncates and notes it to the user. The deeper fix: ensure format requirements flow from the user request into the Writer Agent\'s task definition.'},
+  {q:'What is "context window contamination" in a single-agent research-and-write system, and how does the two-agent architecture fix it?',
+   opts:[
+     'The context window gets too full of text, slowing down the model',
+     'Research mode (collect everything, stay neutral) and writing mode (select, commit, build narrative) require different cognitive postures. In one context window they compete. A two-agent system gives each mode its own context — the Research Agent collects freely; the Writer Agent receives only structured output',
+     'The agent uses too many tokens during research',
+     'Contamination refers to PII leaking into the output'
+   ],ans:1,
+   ok:'Correct! Context window contamination is about competing cognitive modes, not just token length. Research requires "collect everything and stay neutral." Writing requires "select the best angle and commit." These modes interfere with each other in a single context. Separate agents give each mode a clean context.',
+   bad:'Not quite. Context window contamination refers to competing cognitive modes: research mode (gather broadly, stay neutral, flag contradictions) vs writing mode (select, commit, build narrative). When both happen in one context, each mode degrades the other. Separate agent contexts fix this by design.'},
+  {q:'The Writer Agent is told in its system prompt: "Only state things that appear in the research findings." A user asks for a summary of black holes. The research findings contain 5 facts but no mention of Stephen Hawking. Should the Writer Agent mention Stephen Hawking?',
+   opts:[
+     'Yes — it\'s common knowledge about the topic and improves the summary',
+     'Yes — as long as it\'s accurate, additional context is always helpful',
+     'No — the Writer Agent\'s constraint is to stay within the handoff. Adding Hawking from its own training is the exact hallucination-beyond-handoff pattern the two-agent system is designed to prevent',
+     'Only if Hawking is mentioned in the topic title'
+   ],ans:2,
+   ok:'Correct! This is the core discipline of the Writer Agent: it writes from the handoff, not from its training data. Even if adding Hawking would be accurate, it breaks the contract — because you can\'t audit or validate claims that come from the LLM\'s own knowledge rather than the structured research. The right fix: if Hawking is important, the Research Agent should have included him.',
+   bad:'Not quite. The Writer Agent\'s constraint is specifically designed to prevent this. Even accurate additions from the LLM\'s own training are forbidden — because they\'re unauditable. You cannot trace the claim back to a source. If Hawking belongs in the summary, the Research Agent should have found him. The Writer Agent\'s job is synthesis, not supplementation.'},
+];
+let qIdx=0,qScore=0,quizStarted=false,qAnswered=false;
+function initQuiz(){quizStarted=true;qIdx=0;qScore=0;showQ();}
+function showQ(){
+  qAnswered=false;
+  const q=QUESTIONS[qIdx];
+  document.getElementById('qProg').style.width=(qIdx/QUESTIONS.length*100)+'%';
+  document.getElementById('qMeta').textContent=`Question ${qIdx+1} of ${QUESTIONS.length}`;
+  document.getElementById('qScoreTxt').textContent=`Score: ${qScore} / ${qIdx}`;
+  document.getElementById('quizQ').textContent=q.q;
+  document.getElementById('quizFB').className='fb-box';document.getElementById('quizFB').innerHTML='';
+  document.getElementById('qNextBtn').style.display='none';
+  const L=['A','B','C','D'];
+  document.getElementById('quizOpts').innerHTML=q.opts.map((o,i)=>
+    `<button class="q-opt" onclick="answerQ(${i})"><div class="q-opt-k">${L[i]}</div>${o}</button>`
+  ).join('');
+}
+function answerQ(i){
+  if(qAnswered)return;qAnswered=true;
+  const q=QUESTIONS[qIdx];const ok=i===q.ans;if(ok)qScore++;
+  document.querySelectorAll('.q-opt').forEach((el,idx)=>{
+    el.classList.add('disabled');
+    if(idx===q.ans)el.classList.add('correct');
+    else if(idx===i&&!ok)el.classList.add('wrong');
+  });
+  const fb=document.getElementById('quizFB');
+  fb.innerHTML=`<span style="font-size:1.1rem;flex-shrink:0">${ok?'✓':'✗'}</span><span>${ok?q.ok:q.bad}</span>`;
+  fb.className='fb-box show '+(ok?'ok':'bad');
+  document.getElementById('qScoreTxt').textContent=`Score: ${qScore} / ${qIdx+1}`;
+  document.getElementById('qNextBtn').style.display='inline-flex';
+  if(qIdx===QUESTIONS.length-1)document.getElementById('qNextBtn').textContent='See Results →';
+}
+function nextQ(){qIdx++;if(qIdx>=QUESTIONS.length){showQuizDone();return;}showQ();}
+function showQuizDone(){
+  document.getElementById('quizActive').style.display='none';
+  document.getElementById('quizDone').style.display='block';
+  const pct=Math.round(qScore/QUESTIONS.length*100);
+  sectionScores.quiz={earned:qScore,possible:QUESTIONS.length};
+  document.getElementById('qBadge').innerHTML=`<span class="badge ${pct>=70?'b-green':'b-red'}">${qScore}/${QUESTIONS.length} · ${pct}%</span>`;
+  document.getElementById('qMsg').textContent=pct>=70
+    ?`Great work — ${pct}%. You understand multi-agent architecture: separation of concerns, handoff validation, and the disciplined boundary between research and synthesis.`
+    :`You scored ${pct}%. Review the Why Teams section and the failure mode explanations — the quiz draws from both. The core insight: the handoff message is the most important artifact in the system.`;
+  if(pct>=70)markDone('quiz');
+}
+
+// ─── RESULTS ─────────────────────────────────────────────────────────────────
+function buildResults(){
+  const te=Object.values(sectionScores).reduce((s,x)=>s+(x.earned||0),0);
+  const tp=Object.values(sectionScores).reduce((s,x)=>s+(x.possible||0),0);
+  const pct=tp>0?Math.round((te/tp)*100):0;
+  const grade=pct>=90?{l:'Multi-Agent Architect',e:'🏆',m:'You design systems, not just prompts. The handoff is clean. The pipeline holds.'}:
+              pct>=70?{l:'Pipeline Engineer',     e:'⚙️', m:'Solid understanding of agent specialization. Review what you missed.'}:
+              pct>=50?{l:'Agent Collaborator',    e:'🤝', m:'Good instincts — revisit the handoff structure and failure modes.'}:
+                      {l:'Explorer',              e:'🔍',m:'Re-read the Why Teams section and retry the exercises.'};
+  const circ=2*Math.PI*52,dash=circ*(1-pct/100);
+  const breakdown=[
+    {key:'arch',   label:'Architecture Assignment',    pos:sectionScores.arch?.earned||0,    poss:12},
+    {key:'flow',   label:'Message Flow Sequencer',     pos:sectionScores.flow?.earned||0,    poss:8},
+    {key:'sim',    label:'Live Simulation',            pos:completed.has('sim')?1:0,          poss:1},
+    {key:'inspect',label:'Output Inspection',          pos:completed.has('inspect')?1:0,      poss:1},
+    {key:'failure',label:'Failure Mode Classification',pos:sectionScores.failure?.earned||0, poss:6},
+    {key:'quiz',   label:'Knowledge Check',            pos:sectionScores.quiz?.earned||0,    poss:7},
+  ];
+  const rows=breakdown.map(item=>{
+    const p=item.poss>0?Math.round((item.pos/item.poss)*100):0;
+    const col=p>=80?'var(--green)':p>=50?'var(--yellow)':'var(--GA-red)';
+    return `<div class="score-row"><div class="score-dot" style="background:${col}"></div>
+      <span style="flex:1;font-size:.9rem;font-weight:500;color:var(--gray-lt)">${item.label}</span>
+      <div class="score-bar-wrap"><div class="score-bar-fill" style="width:${p}%;background:${col}"></div></div>
+      <span style="font-size:.82rem;color:var(--gray);min-width:38px;text-align:right">${item.pos}/${item.poss}</span>
+      <span class="badge" style="background:${p>=80?'rgba(34,197,94,.15)':p>=50?'rgba(245,197,24,.15)':'rgba(232,51,58,.15)'};color:${col};min-width:38px;text-align:center">${p}%</span>
+    </div>`;
+  }).join('');
+  const takeaways=[
+    'Specialization beats generalization. A Research Agent with a clean context window and a single job (gather, structure, annotate) outperforms a single agent trying to research and write simultaneously. The cognitive modes compete; separate contexts eliminate the competition.',
+    'The handoff message is a first-class artifact. It\'s not just a string you pass between prompts — it\'s a structured contract with a schema, confidence scores, and explicitly flagged gaps. The quality of the handoff determines everything the Writer Agent can and cannot say. Bad handoff → bad summary, always.',
+    'The Orchestrator\'s validation step is not optional. It\'s where schema errors, low-confidence floods, missing fields, and format violations get caught before propagating downstream. Skipping validation is how a single Research Agent failure silently corrupts the final output that the user trusts.',
+  ].map((t,i)=>`<div class="tk-item"><div class="tk-num">0${i+1}</div><div class="tk-txt">${t}</div></div>`).join('');
+
+  document.getElementById('resultsBody').innerHTML=`
+    <div style="display:flex;align-items:center;gap:28px;flex-wrap:wrap;padding-bottom:36px;border-bottom:1px solid var(--line);margin-bottom:32px">
+      <div class="results-ring">
+        <svg width="120" height="120" style="transform:rotate(-90deg)" viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="52" fill="none" stroke="var(--black3)" stroke-width="8"/>
+          <circle cx="60" cy="60" r="52" fill="none" stroke="var(--GA-red)" stroke-width="8"
+            stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${dash.toFixed(1)}"
+            stroke-linecap="round" style="transition:stroke-dashoffset 1.2s ease"/>
+        </svg>
+        <div class="results-ring-txt"><div class="ring-pct">${pct}%</div><div class="ring-sub">score</div></div>
+      </div>
+      <div>
+        <div style="font-size:2rem;margin-bottom:4px">${grade.e}</div>
+        <h2 style="font-size:clamp(2rem,5vw,2.8rem);margin-bottom:6px">${grade.l}</h2>
+        <p style="color:var(--gray-lt);font-size:.95rem">${grade.m}</p>
+        <p style="color:var(--gray-dk);font-size:.82rem;margin-top:6px;font-family:'JetBrains Mono',monospace">${te} pts earned · ${tp} pts possible</p>
+      </div>
+    </div>
+    <span class="eyebrow">Score Breakdown</span>
+    <div class="card" style="padding:8px 20px;margin-bottom:28px">${rows}</div>
+    <span class="eyebrow">Key Takeaways</span>
+    <div class="card" style="padding:8px 20px;margin-bottom:24px">${takeaways}</div>
+    ${lastWriterOutput?`
+    <div style="background:rgba(168,85,247,.06);border:1px solid rgba(168,85,247,.2);border-radius:var(--r-lg);padding:18px 20px;margin-bottom:16px">
+      <div style="font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--purple);margin-bottom:8px">Your Simulation Output — Topic: ${selectedTopic}</div>
+      <p style="font-size:.9rem;color:var(--gray-lt);line-height:1.75">${lastWriterOutput}</p>
+    </div>`:``}
+    <div style="background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:var(--r-lg);padding:20px">
+      <p style="font-size:.92rem;color:var(--gray-lt);line-height:1.7">
+        🎉 <strong style="color:#fff">You designed, sequenced, and ran a real two-agent system.</strong><br/>
+        Next module: <strong style="color:#fff">Agent Evaluation &amp; Testing</strong> — how do you know if your multi-agent pipeline is actually working correctly in production?
+      </p>
+    </div>`;
+}
+</script>
+</body>
+</html>
