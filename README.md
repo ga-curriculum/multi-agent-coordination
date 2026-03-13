@@ -413,3 +413,7 @@ Before deploying a multi-agent system, verify:
 - [Flowise — Multi-Agent Flow Setup](https://docs.flowiseai.com/)
 - Lilian Weng — *LLM-powered Autonomous Agents: Planning* (2023) — [lilianweng.github.io](https://lilianweng.github.io/posts/2023-06-23-agent/#planning)
 - OWASP — *Top 10 for LLMs: Excessive Agency* (2023)
+
+---
+
+*General Assembly · Build AI Agents · BAA 16.0 · © 2026*
