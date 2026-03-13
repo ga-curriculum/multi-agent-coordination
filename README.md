@@ -416,4 +416,4 @@ Before deploying a multi-agent system, verify:
 
 ---
 
-*General Assembly · Build AI Agents · BAA 16.0 · © 2026*
+*General Assembly · Build AI Agents · BAA 9.0 · © 2026*
