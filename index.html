@@ -4,7 +4,17 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Agent Team Simulation — General Assembly BAA 9.0</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+@font-face{font-family:"Barlow Condensed Bold";src:url("https://ga-curriculum.github.io/universal-resources-internal/static/v2/fonts/barlow-condensed-bold.woff2") format("woff2");font-display:swap}
+@font-face{font-family:"Nunito Sans";font-style:normal;font-weight:400;src:url("https://ga-curriculum.github.io/universal-resources-internal/static/v2/fonts/nunito-sans-v15-latin-regular.woff2") format("woff2");font-display:swap}
+@font-face{font-family:"Nunito Sans";font-style:italic;font-weight:400;src:url("https://ga-curriculum.github.io/universal-resources-internal/static/v2/fonts/nunito-sans-v15-latin-italic.woff2") format("woff2");font-display:swap}
+@font-face{font-family:"Nunito Sans";font-style:normal;font-weight:700;src:url("https://ga-curriculum.github.io/universal-resources-internal/static/v2/fonts/nunito-sans-v15-latin-700.woff2") format("woff2");font-display:swap}
+@font-face{font-family:"Nunito Sans";font-style:italic;font-weight:700;src:url("https://ga-curriculum.github.io/universal-resources-internal/static/v2/fonts/nunito-sans-v15-latin-700italic.woff2") format("woff2");font-display:swap}
+@font-face{font-family:"Nunito Sans";font-style:normal;font-weight:800;src:url("https://ga-curriculum.github.io/universal-resources-internal/static/v2/fonts/nunito-sans-v15-latin-800.woff2") format("woff2");font-display:swap}
+@font-face{font-family:"Nunito Sans";font-style:italic;font-weight:800;src:url("https://ga-curriculum.github.io/universal-resources-internal/static/v2/fonts/nunito-sans-v15-latin-800italic.woff2") format("woff2");font-display:swap}
+@font-face{font-family:"Cascadia Mono";font-style:normal;src:url("https://ga-curriculum.github.io/universal-resources-internal/static/v2/fonts/cascadia-mono.woff2") format("woff2");font-display:swap}
+@font-face{font-family:"Cascadia Mono";font-style:italic;src:url("https://ga-curriculum.github.io/universal-resources-internal/static/v2/fonts/cascadia-mono-italic.woff2") format("woff2");font-display:swap}
+</style>
 <style>
 :root{
   --black:#0d0d0d;--black2:#1a1a1a;--black3:#252525;--black4:#333;
@@ -17,29 +27,29 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:'Barlow',sans-serif;background:var(--black);color:var(--white);font-size:16px;line-height:1.6;min-height:100vh}
+body{font-family:'Nunito Sans',sans-serif;background:var(--black);color:var(--white);font-size:16px;line-height:1.6;min-height:100vh}
 ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--black2)}::-webkit-scrollbar-thumb{background:var(--black4);border-radius:3px}
 header{position:sticky;top:0;z-index:500;background:var(--black);border-bottom:2px solid var(--GA-red);display:flex;align-items:stretch;height:58px}
 .ga-logo{display:flex;align-items:center;gap:10px;padding:0 20px;border-right:1px solid var(--line);flex-shrink:0;cursor:pointer}
-.ga-mark{width:32px;height:32px;background:var(--GA-red);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;color:#fff;border-radius:2px}
-.ga-name{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--gray-lt);text-transform:uppercase;line-height:1.2}
+.ga-mark{width:32px;height:32px;background:var(--GA-red);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed Bold',sans-serif;font-size:14px;font-weight:800;color:#fff;border-radius:2px}
+.ga-name{font-family:'Barlow Condensed Bold',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--gray-lt);text-transform:uppercase;line-height:1.2}
 .ga-name span{display:block;font-size:10px;color:var(--gray);font-weight:600}
 .tab-bar{display:flex;align-items:stretch;overflow-x:auto;flex:1;scrollbar-width:none}
 .tab-bar::-webkit-scrollbar{display:none}
-.tab{display:flex;align-items:center;padding:0 14px;font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;color:var(--gray);cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:color .15s,border-color .15s;position:relative;top:2px}
+.tab{display:flex;align-items:center;padding:0 14px;font-family:'Nunito Sans',sans-serif;font-size:12px;font-weight:600;color:var(--gray);cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:color .15s,border-color .15s;position:relative;top:2px}
 .tab:hover{color:#fff}.tab.active{color:#fff;border-bottom-color:var(--GA-red)}
 .hd-end{display:flex;align-items:center;padding:0 18px;border-left:1px solid var(--line);flex-shrink:0}
-.prog-chip{background:var(--GA-red);color:#fff;font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 12px;border-radius:20px}
+.prog-chip{background:var(--GA-red);color:#fff;font-family:'Cascadia Mono',monospace;font-size:11px;padding:4px 12px;border-radius:20px}
 .section{display:none}.section.active{display:block}
 .wrap{max-width:880px;margin:0 auto;padding:48px 24px 80px}
-.eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--GA-red);margin-bottom:10px;display:block}
-h1{font-family:'Barlow Condensed',sans-serif;font-size:clamp(2.4rem,6vw,3.8rem);font-weight:900;line-height:1.05;color:#fff;margin-bottom:16px}
+.eyebrow{font-family:'Barlow Condensed Bold',sans-serif;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--GA-red);margin-bottom:10px;display:block}
+h1{font-family:'Barlow Condensed Bold',sans-serif;font-size:clamp(2.4rem,6vw,3.8rem);font-weight:900;line-height:1.05;color:#fff;margin-bottom:16px}
 h1 .red{color:var(--GA-red)}
-h2{font-family:'Barlow Condensed',sans-serif;font-size:clamp(1.7rem,4vw,2.4rem);font-weight:800;line-height:1.1;color:#fff;margin-bottom:8px}
+h2{font-family:'Barlow Condensed Bold',sans-serif;font-size:clamp(1.7rem,4vw,2.4rem);font-weight:800;line-height:1.1;color:#fff;margin-bottom:8px}
 h2 .red{color:var(--GA-red)}
 .lead{font-size:1.05rem;color:var(--gray-lt);line-height:1.7;margin-bottom:28px;max-width:640px}
 .hr{height:1px;background:var(--line);margin:36px 0}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:var(--r);font-family:'Barlow',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;border:2px solid transparent;transition:all .15s;white-space:nowrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:var(--r);font-family:'Nunito Sans',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;border:2px solid transparent;transition:all .15s;white-space:nowrap}
 .btn-red{background:var(--GA-red);color:#fff;border-color:var(--GA-red)}.btn-red:hover{background:var(--GA-red2);transform:translateY(-1px)}
 .btn-green{background:var(--green);color:var(--black)}.btn-green:hover{background:#16a34a;transform:translateY(-1px)}
 .btn-ghost{background:transparent;color:var(--gray-lt);border:2px solid var(--line2);padding:10px 20px;font-size:.88rem;font-weight:600;cursor:pointer;border-radius:var(--r);transition:all .15s}.btn-ghost:hover{border-color:var(--gray);color:#fff}
@@ -55,12 +65,12 @@ h2 .red{color:var(--GA-red)}
 .hero-kicker .dot{width:8px;height:8px;background:var(--GA-red);border-radius:50%}
 .obj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;margin-bottom:32px}
 .obj-card{background:var(--black2);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px;display:flex;gap:14px}
-.obj-num{font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:900;color:var(--GA-red);line-height:1;flex-shrink:0}
+.obj-num{font-family:'Barlow Condensed Bold',sans-serif;font-size:2rem;font-weight:900;color:var(--GA-red);line-height:1;flex-shrink:0}
 .obj-body{font-size:.9rem;color:var(--gray-lt);line-height:1.55;padding-top:4px}
 .roadmap{display:flex;flex-direction:column}
 .rm-item{display:flex;align-items:flex-start;gap:16px;padding:14px 0;border-bottom:1px solid var(--line)}
 .rm-item:last-child{border-bottom:none}
-.rm-dot{width:36px;height:36px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;border:2px solid var(--line);background:var(--black3);color:var(--gray);transition:all .25s}
+.rm-dot{width:36px;height:36px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed Bold',sans-serif;font-size:13px;font-weight:700;border:2px solid var(--line);background:var(--black3);color:var(--gray);transition:all .25s}
 .rm-dot.done{background:var(--green);border-color:var(--green);color:var(--black)}
 .rm-dot.active{background:var(--GA-red);border-color:var(--GA-red);color:#fff}
 .rm-label{font-size:.95rem;font-weight:600;color:var(--gray);padding-top:6px}
@@ -77,11 +87,11 @@ h2 .red{color:var(--GA-red)}
 .arch-diagram{display:flex;align-items:center;gap:0;flex-wrap:wrap;margin-bottom:28px;justify-content:center}
 .agent-box{border-radius:var(--r-lg);padding:18px 22px;min-width:160px;text-align:center;border:2px solid;position:relative}
 .agent-box .a-icon{font-size:1.8rem;display:block;margin-bottom:6px}
-.agent-box .a-label{font-family:'Barlow Condensed',sans-serif;font-size:.82rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;display:block}
+.agent-box .a-label{font-family:'Barlow Condensed Bold',sans-serif;font-size:.82rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;display:block}
 .agent-box .a-sub{font-size:.72rem;margin-top:3px;display:block;opacity:.65}
 .agent-arrow{display:flex;flex-direction:column;align-items:center;padding:0 8px;flex-shrink:0}
 .agent-arrow svg{flex-shrink:0}
-.arrow-label{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--gray-dk);text-align:center;margin-top:2px;max-width:80px;line-height:1.3}
+.arrow-label{font-family:'Cascadia Mono',monospace;font-size:.62rem;color:var(--gray-dk);text-align:center;margin-top:2px;max-width:80px;line-height:1.3}
 
 /* ── DRAG DROP ─────────────────────────────────────────── */
 .drag-pool{background:var(--black3);border:1px solid var(--line);border-radius:var(--r-lg);padding:16px;margin-bottom:18px}
@@ -93,7 +103,7 @@ h2 .red{color:var(--GA-red)}
 .drag-chip.wrong{background:rgba(232,51,58,.12);border-color:var(--GA-red);color:var(--GA-red);cursor:default}
 .dz{border-radius:var(--r-lg);overflow:hidden;margin-bottom:10px}
 .dz-head{padding:12px 18px;display:flex;align-items:center;gap:10px}
-.dz-title{font-family:'Barlow Condensed',sans-serif;font-size:.88rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase}
+.dz-title{font-family:'Barlow Condensed Bold',sans-serif;font-size:.88rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase}
 .dz-sub{font-size:.74rem;color:rgba(255,255,255,.38);margin-top:1px}
 .dz-body{background:var(--black2);border:1px solid var(--line);border-top:none;border-radius:0 0 var(--r-lg) var(--r-lg);padding:12px;min-height:68px;display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start;transition:background .15s}
 .dz-body.over{background:var(--black3)}
@@ -105,11 +115,11 @@ h2 .red{color:var(--GA-red)}
 .seq-item.correct{border-color:var(--green);background:rgba(34,197,94,.04)}
 .seq-item.wrong{border-color:var(--GA-red)}
 .seq-handle{color:var(--gray-dk);flex-shrink:0;padding-top:2px}
-.seq-pos{width:28px;height:28px;border-radius:6px;flex-shrink:0;background:var(--black3);border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:700;color:var(--gray)}
+.seq-pos{width:28px;height:28px;border-radius:6px;flex-shrink:0;background:var(--black3);border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:'Cascadia Mono',monospace;font-size:.75rem;font-weight:700;color:var(--gray)}
 .seq-item.correct .seq-pos{background:var(--green);border-color:var(--green);color:var(--black)}
 .seq-item.wrong .seq-pos{background:var(--GA-red);border-color:var(--GA-red);color:#fff}
 .seq-text{font-size:.9rem;color:var(--gray-lt);line-height:1.55;flex:1}
-.seq-agent{font-family:'Barlow Condensed',sans-serif;font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:3px;flex-shrink:0;margin-top:3px}
+.seq-agent{font-family:'Barlow Condensed Bold',sans-serif;font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:3px;flex-shrink:0;margin-top:3px}
 
 /* ── SIMULATOR ─────────────────────────────────────────── */
 .sim-topic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:8px;margin-bottom:18px}
@@ -121,14 +131,14 @@ h2 .red{color:var(--GA-red)}
 .topic-btn.selected .topic-name{color:#fff}
 .sim-stage{border-radius:var(--r-lg);overflow:hidden;margin-bottom:12px}
 .stage-head{padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px}
-.stage-title{font-family:'Barlow Condensed',sans-serif;font-size:.82rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em}
-.stage-status{font-family:'JetBrains Mono',monospace;font-size:.7rem;padding:3px 10px;border-radius:20px;font-weight:700}
+.stage-title{font-family:'Barlow Condensed Bold',sans-serif;font-size:.82rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em}
+.stage-status{font-family:'Cascadia Mono',monospace;font-size:.7rem;padding:3px 10px;border-radius:20px;font-weight:700}
 .status-idle{background:var(--black4);color:var(--gray)}
 .status-running{background:rgba(245,197,24,.18);color:var(--yellow);animation:pulse 1.2s infinite}
 .status-done{background:rgba(34,197,94,.18);color:var(--green)}
 .status-waiting{background:rgba(59,130,246,.18);color:var(--blue)}
 .stage-body{background:var(--black2);border:1px solid var(--line);border-top:none;border-radius:0 0 var(--r-lg) var(--r-lg);padding:16px 18px;min-height:80px;font-size:.88rem;color:var(--gray-lt);line-height:1.7}
-.stage-body pre{font-family:'JetBrains Mono',monospace;font-size:.78rem;white-space:pre-wrap;word-break:break-word;color:var(--gray-lt)}
+.stage-body pre{font-family:'Cascadia Mono',monospace;font-size:.78rem;white-space:pre-wrap;word-break:break-word;color:var(--gray-lt)}
 .handoff-arrow{display:flex;align-items:center;gap:12px;padding:10px 18px;margin-bottom:12px;background:var(--black3);border-radius:var(--r-lg);border:1px dashed var(--line2)}
 .handoff-icon{font-size:1rem;flex-shrink:0}
 .handoff-label{font-size:.8rem;font-weight:600;color:var(--gray-dk);flex:1}
@@ -165,14 +175,14 @@ h2 .red{color:var(--GA-red)}
 .qz-meta span{font-size:.85rem;color:var(--gray)}
 .prog-bar{height:4px;background:var(--black3);border-radius:2px;margin-bottom:28px;overflow:hidden}
 .prog-fill{height:100%;background:var(--GA-red);border-radius:2px;transition:width .4s}
-.quiz-q{font-family:'Barlow Condensed',sans-serif;font-size:1.35rem;font-weight:700;line-height:1.3;color:#fff;margin-bottom:20px}
+.quiz-q{font-family:'Barlow Condensed Bold',sans-serif;font-size:1.35rem;font-weight:700;line-height:1.3;color:#fff;margin-bottom:20px}
 .q-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
 .q-opt{background:var(--black2);border:2px solid var(--line);border-radius:var(--r-lg);padding:14px 18px;cursor:pointer;display:flex;align-items:flex-start;gap:14px;font-size:.93rem;color:var(--gray-lt);transition:all .16s;text-align:left;width:100%}
 .q-opt:hover:not(.disabled){border-color:var(--GA-red);color:#fff;background:rgba(232,51,58,.05)}
 .q-opt.correct{border-color:var(--green);background:rgba(34,197,94,.07);color:#fff}
 .q-opt.wrong{border-color:var(--GA-red);background:rgba(232,51,58,.08);color:#fff}
 .q-opt.disabled{cursor:default}
-.q-opt-k{width:30px;height:30px;border-radius:6px;flex-shrink:0;background:var(--black3);border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:700;color:var(--gray)}
+.q-opt-k{width:30px;height:30px;border-radius:6px;flex-shrink:0;background:var(--black3);border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:'Cascadia Mono',monospace;font-size:.75rem;font-weight:700;color:var(--gray)}
 .q-opt.correct .q-opt-k{background:var(--green);border-color:var(--green);color:var(--black)}
 .q-opt.wrong .q-opt-k{background:var(--GA-red);border-color:var(--GA-red);color:#fff}
 .q-opt:hover:not(.disabled) .q-opt-k{border-color:var(--GA-red);color:var(--GA-red)}
@@ -183,7 +193,7 @@ h2 .red{color:var(--GA-red)}
 /* results */
 .results-ring{position:relative;width:120px;height:120px;flex-shrink:0}
 .results-ring-txt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.ring-pct{font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:900;line-height:1}
+.ring-pct{font-family:'Barlow Condensed Bold',sans-serif;font-size:2rem;font-weight:900;line-height:1}
 .ring-sub{font-size:.7rem;color:var(--gray);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
 .score-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
 .score-row:last-child{border-bottom:none}
@@ -192,10 +202,10 @@ h2 .red{color:var(--GA-red)}
 .score-bar-fill{height:100%;border-radius:2px}
 .tk-item{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
 .tk-item:last-child{border-bottom:none}
-.tk-num{font-family:'Barlow Condensed',sans-serif;font-size:1.6rem;font-weight:900;color:var(--GA-red);flex-shrink:0;line-height:1;padding-top:2px}
+.tk-num{font-family:'Barlow Condensed Bold',sans-serif;font-size:1.6rem;font-weight:900;color:var(--GA-red);flex-shrink:0;line-height:1;padding-top:2px}
 .tk-txt{font-size:.92rem;color:var(--gray-lt);line-height:1.65}
 /* custom input */
-.custom-input{background:var(--black3);border:1px solid var(--line);border-radius:var(--r-lg);padding:10px 14px;color:#fff;font-family:'Barlow',sans-serif;font-size:.9rem;outline:none;width:100%;max-width:400px}
+.custom-input{background:var(--black3);border:1px solid var(--line);border-radius:var(--r-lg);padding:10px 14px;color:#fff;font-family:'Nunito Sans',sans-serif;font-size:.9rem;outline:none;width:100%;max-width:400px}
 .custom-input:focus{border-color:var(--GA-red)}
 .custom-input::placeholder{color:var(--gray-dk)}
 </style>
@@ -267,7 +277,7 @@ h2 .red{color:var(--GA-red)}
       <div style="display:flex;align-items:flex-start;gap:14px">
         <div style="font-size:1.6rem;flex-shrink:0">🧠</div>
         <div>
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:6px">Problem 1 — Context Window Contamination</div>
+          <div style="font-family:'Barlow Condensed Bold',sans-serif;font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:6px">Problem 1 — Context Window Contamination</div>
           <p style="font-size:.92rem;color:var(--gray-lt);line-height:1.75">When a single agent both researches AND writes, it juggles two competing cognitive modes in one context window. Research mode favors breadth — collect everything, stay neutral, flag contradictions. Writing mode favors selectivity — pick the best angle, build narrative momentum, ignore tangents. These modes contaminate each other. The result: a half-researched summary, or a paralyzed researcher who can't commit to a narrative.</p>
           <div class="callout callout-tip" style="margin-top:8px"><strong>The fix:</strong> Separate context windows. The Research Agent's context is pure signal collection. The Writer Agent's context contains only the structured findings — not the noise.</div>
         </div>
@@ -277,7 +287,7 @@ h2 .red{color:var(--GA-red)}
       <div style="display:flex;align-items:flex-start;gap:14px">
         <div style="font-size:1.6rem;flex-shrink:0">⚙️</div>
         <div>
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:6px">Problem 2 — Role Drift Under Instruction Pressure</div>
+          <div style="font-family:'Barlow Condensed Bold',sans-serif;font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:6px">Problem 2 — Role Drift Under Instruction Pressure</div>
           <p style="font-size:.92rem;color:var(--gray-lt);line-height:1.75">Ask a single agent to "research the topic and write a summary" and it will start writing before it has finished researching — because the instruction contains implicit pressure to produce visible output. The research phase gets cut short. Alternatively, it over-researches and delivers a data dump instead of a summary. The two tasks have different completion signals and the agent can't satisfy both.</p>
           <div class="callout callout-tip" style="margin-top:8px"><strong>The fix:</strong> Each agent has one job and one completion signal. The Research Agent is done when it delivers a structured JSON handoff. The Writer Agent is done when it delivers a formatted summary.</div>
         </div>
@@ -287,7 +297,7 @@ h2 .red{color:var(--GA-red)}
       <div style="display:flex;align-items:flex-start;gap:14px">
         <div style="font-size:1.6rem;flex-shrink:0">🔁</div>
         <div>
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:6px">Problem 3 — No Auditability of the Research-to-Writing Transition</div>
+          <div style="font-family:'Barlow Condensed Bold',sans-serif;font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:6px">Problem 3 — No Auditability of the Research-to-Writing Transition</div>
           <p style="font-size:.92rem;color:var(--gray-lt);line-height:1.75">When research and writing happen inside one agent, you can't inspect what the agent "knew" before it started writing. If the summary is wrong, was it a bad research phase or a bad synthesis phase? In a two-agent system, the handoff message is a first-class artifact — you can read it, validate it, and even route it to a human reviewer before the Writer Agent sees it.</p>
           <div class="callout callout-tip" style="margin-top:8px"><strong>The fix:</strong> The handoff message is structured and inspectable. The Orchestrator can validate, filter, or augment it before passing it downstream.</div>
         </div>
@@ -445,8 +455,8 @@ h2 .red{color:var(--GA-red)}
   <!-- Handoff JSON display -->
   <div id="handoffDisplay" style="display:none;margin-bottom:12px">
     <div style="background:var(--black3);border:1px solid var(--purple);border-radius:var(--r-lg);padding:16px 18px">
-      <div style="font-family:'Barlow Condensed',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:10px">📦 Handoff Message (inter-agent structured data)</div>
-      <pre id="handoffJSON" style="font-family:'JetBrains Mono',monospace;font-size:.76rem;color:#d8b4fe;white-space:pre-wrap;word-break:break-word;line-height:1.7"></pre>
+      <div style="font-family:'Barlow Condensed Bold',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:10px">📦 Handoff Message (inter-agent structured data)</div>
+      <pre id="handoffJSON" style="font-family:'Cascadia Mono',monospace;font-size:.76rem;color:#d8b4fe;white-space:pre-wrap;word-break:break-word;line-height:1.7"></pre>
     </div>
   </div>
 
@@ -1223,7 +1233,7 @@ function buildResults(){
         <div style="font-size:2rem;margin-bottom:4px">${grade.e}</div>
         <h2 style="font-size:clamp(2rem,5vw,2.8rem);margin-bottom:6px">${grade.l}</h2>
         <p style="color:var(--gray-lt);font-size:.95rem">${grade.m}</p>
-        <p style="color:var(--gray-dk);font-size:.82rem;margin-top:6px;font-family:'JetBrains Mono',monospace">${te} pts earned · ${tp} pts possible</p>
+        <p style="color:var(--gray-dk);font-size:.82rem;margin-top:6px;font-family:'Cascadia Mono',monospace">${te} pts earned · ${tp} pts possible</p>
       </div>
     </div>
     <span class="eyebrow">Score Breakdown</span>
